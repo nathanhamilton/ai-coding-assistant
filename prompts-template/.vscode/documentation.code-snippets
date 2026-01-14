@@ -1,0 +1,264 @@
+{
+  "Project Session Commands": {
+    "prefix": "📚 Documentation & Project Management",
+    "description": "Commands for managing project documentation and sessions",
+    "body": []
+  },
+  "Load Project Context": {
+    "prefix": "/project",
+    "body": [
+      "Load prompts/projects/project.md"
+    ],
+    "description": "🚀 Start any project session - loads base context and prompts for project selection"
+  },
+  "Continue Existing Project": {
+    "prefix": "/continue",
+    "body": [
+      "Continue: ${1:project-name}"
+    ],
+    "description": "📂 Resume work on an existing project"
+  },
+  "Start New Project": {
+    "prefix": "/new",
+    "body": [
+      "New: ${1:project-name}"
+    ],
+    "description": "✨ Create a new project with guided setup"
+  },
+  "List All Projects": {
+    "prefix": "/list",
+    "body": [
+      "List projects"
+    ],
+    "description": "📋 Show all active, completed, and on-hold projects"
+  },
+  "Save Session": {
+    "prefix": "/save",
+    "body": [
+      "save session"
+    ],
+    "description": "💾 Save current progress to project file"
+  },
+  "End Session": {
+    "prefix": "/end",
+    "body": [
+      "end session"
+    ],
+    "description": "🏁 End session with full summary, PR description, and git check"
+  },
+  "Session Status": {
+    "prefix": "/status",
+    "body": [
+      "session status"
+    ],
+    "description": "📊 Preview what would be saved without actually saving"
+  },
+  "Markdown Formatting": {
+    "prefix": "🎨 Documentation Templates",
+    "description": "Quick templates for documentation",
+    "body": []
+  },
+  "Session Log Header": {
+    "prefix": "session",
+    "scope": "markdown",
+    "body": [
+      "### Session: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} (Developer: ${1:${GIT_USERNAME:USERNAME}})",
+      "",
+      "**${CURRENT_HOUR}:${CURRENT_MINUTE} - Session Start**",
+      "- Working on: ${2:feature/task}",
+      "- Context: ${3:Brief context}",
+      "$0"
+    ],
+    "description": "📝 New session log header with timestamp"
+  },
+  "Progress Save": {
+    "prefix": "progress",
+    "scope": "markdown",
+    "body": [
+      "**${CURRENT_HOUR}:${CURRENT_MINUTE} - Progress Save**",
+      "- ✅ ${1:Completed work}",
+      "- ${2:Current status}",
+      "$0"
+    ],
+    "description": "⏱️ Progress checkpoint within a session"
+  },
+  "Session End": {
+    "prefix": "sessionend",
+    "scope": "markdown",
+    "body": [
+      "**${CURRENT_HOUR}:${CURRENT_MINUTE} - Session End**",
+      "",
+      "**Completed**:",
+      "- ${1:Major accomplishments}",
+      "",
+      "**Decisions Made**:",
+      "- ${2:Key decisions}",
+      "",
+      "**Files Modified**:",
+      "- ${3:Changed files}",
+      "",
+      "**Next Actions**:",
+      "- [ ] ${4:Next steps}",
+      "",
+      "**Time Investment**: ${5:duration}  ",
+      "**Status**: ${6:Overall status update}",
+      "$0"
+    ],
+    "description": "🏁 Session end summary"
+  },
+  "Technical Decision": {
+    "prefix": "decision",
+    "scope": "markdown",
+    "body": [
+      "### Decision ${1:00X}: ${2:Title} (${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE})",
+      "",
+      "**Context**: ${3:Why this decision was needed}",
+      "",
+      "**Decision**: ${4:What was decided}",
+      "",
+      "**Rationale**:",
+      "- ${5:Key reasoning}",
+      "",
+      "**Alternatives Considered**:",
+      "1. **${6:Option A}**: ${7:Why not}",
+      "2. **${8:Option B}**: ${9:Why not}",
+      "",
+      "**Consequences**:",
+      "- ✅ ${10:Benefits}",
+      "- ⚠️ ${11:Trade-offs}",
+      "$0"
+    ],
+    "description": "🎯 Technical decision record"
+  },
+  "Work Item Priority": {
+    "prefix": "task",
+    "scope": "markdown",
+    "body": [
+      "- [ ] ${1|🔴 P1,🟡 P1,🟢 P2,🔵 P3|}: ${2:Task description}$0"
+    ],
+    "description": "✅ Prioritized work item (🔴 Critical, 🟡 High, 🟢 Medium, 🔵 Low)"
+  },
+  "Completed Task": {
+    "prefix": "done",
+    "scope": "markdown",
+    "body": [
+      "- [x] ✅ ${1:Task description} (${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE})$0"
+    ],
+    "description": "✅ Mark task as completed with date"
+  },
+  "Knowledge Base Entry": {
+    "prefix": "kb",
+    "scope": "markdown",
+    "body": [
+      "## ${1:Pattern/Topic Name}",
+      "",
+      "**Category**: ${2|Pattern,Anti-Pattern,Gotcha,Solution,Best Practice|}  ",
+      "**Discovered**: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}  ",
+      "**Project**: [${3:project-name}](${3}.md)  ",
+      "**Tags**: ${4:tag1, tag2, tag3}",
+      "",
+      "### Problem",
+      "${5:What problem does this solve or what issue was encountered?}",
+      "",
+      "### Solution",
+      "${6:How to solve it or what pattern to use}",
+      "",
+      "```${7:ruby}",
+      "${8:# Code example}",
+      "```",
+      "",
+      "### When to Use",
+      "- ${9:Use case 1}",
+      "- ${10:Use case 2}",
+      "",
+      "### Trade-offs",
+      "- ✅ ${11:Benefits}",
+      "- ⚠️ ${12:Considerations}",
+      "",
+      "### Related",
+      "- ${13:Related patterns or decisions}",
+      "$0"
+    ],
+    "description": "📚 Knowledge base entry template"
+  },
+  "Code Block with Title": {
+    "prefix": "code",
+    "scope": "markdown",
+    "body": [
+      "```${1:ruby}",
+      "# ${2:Description}",
+      "${3:code}",
+      "```",
+      "$0"
+    ],
+    "description": "💻 Code block with language and comment"
+  },
+  "Comparison Good vs Bad": {
+    "prefix": "compare",
+    "scope": "markdown",
+    "body": [
+      "```${1:ruby}",
+      "# ❌ BAD: ${2:Why this is bad}",
+      "${3:bad code}",
+      "",
+      "# ✅ GOOD: ${4:Why this is better}",
+      "${5:good code}",
+      "```",
+      "$0"
+    ],
+    "description": "⚖️ Code comparison (bad vs good)"
+  },
+  "Section Header": {
+    "prefix": "section",
+    "scope": "markdown",
+    "body": [
+      "---",
+      "",
+      "## ${1:📚} ${2:Section Title}",
+      "",
+      "${3:Description}",
+      "$0"
+    ],
+    "description": "📑 Major section header with emoji"
+  },
+  "Subsection": {
+    "prefix": "subsection",
+    "scope": "markdown",
+    "body": [
+      "### ${1:Subsection Title}",
+      "",
+      "${2:Content}",
+      "$0"
+    ],
+    "description": "📄 Subsection header"
+  },
+  "Note/Callout": {
+    "prefix": "note",
+    "scope": "markdown",
+    "body": [
+      "> ${1|💡,⚠️,🔐,⚡,🐛,📌|} **${2|Note,Warning,Security,Performance,Bug,Important|}**: ${3:Message}",
+      "$0"
+    ],
+    "description": "💬 Callout with emoji"
+  },
+  "File Reference": {
+    "prefix": "file",
+    "scope": "markdown",
+    "body": [
+      "[${1:file-name}](${2:path/to/file})$0"
+    ],
+    "description": "📎 File reference link"
+  },
+  "Emoji Categories": {
+    "prefix": "emoji",
+    "scope": "markdown",
+    "body": [
+      "📚 Documentation | 🎯 Goals | 📊 Status | 💻 Code | 🔧 Tools",
+      "🎨 Design | 🚀 Deploy | ✅ Done | ❌ Failed | ⚠️ Warning",
+      "💡 Tips | 🔍 Search | 📝 Notes | 🔗 Links | 🔐 Security",
+      "⚡ Performance | 🐛 Bugs | 🧪 Testing | 🏗️ Architecture",
+      "📋 Lists | 📅 Schedule | 🔄 Process | 💬 Discussion"
+    ],
+    "description": "😀 Quick emoji reference"
+  }
+}
