@@ -1,0 +1,7 @@
+{
+  "github.copilot.chat.welcomeMessage": "first",
+  "github.copilot.chat.welcomeMessage.text": "👋 **[PROJECT NAME]**\n\nReady to work!\n\n**Quick Start:**\n• Type `/project` or `/begin-project` — starts full project workflow (contract → design → engineering)\n• Or say **'begin project'** to load context and start work\n\n**Project Commands:**\n• `/project` or `/begin-project` — initiate project lifecycle\n• `/save` — save session progress\n• `/end` — end session with full summary\n• `/status` — preview current status\n• `/continue` — resume an existing project\n• `/new` — start a new project\n\n**Agents:**\n• `@project-manager` — orchestrates the full lifecycle\n• `@contract-agent` — defines project scope one question at a time\n• `@design-agent` — UI/UX specs before implementation\n• `@senior-engineer` — production-ready code\n• `@test-agent` — comprehensive test coverage\n• `@api-agent` — API endpoint builder\n• `@docs-agent` — technical documentation",
+  "files.associations": {
+    "*.md": "markdown"
+  }
+}

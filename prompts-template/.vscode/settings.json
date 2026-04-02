@@ -1,7 +1,0 @@
-{
-  "github.copilot.chat.welcomeMessage": "first",
-  "github.copilot.chat.welcomeMessage.text": "👋 **Pearson AP Tech Dashboard**\n\nReady to work!\n\n**Quick Start:**\n• Say **'begin project'** to load full context and start work\n• Or just ask questions - essential standards are already loaded\n\n**Commands:**\n• `/save` - Save session progress\n• `/end` - End session with full summary\n• `/status` - Preview current status\n\n**New Project:**\n• Say: \"new project: APBAU-XXXX-description\"",
-  "files.associations": {
-    "*.md": "markdown"
-  }
-}
