@@ -1,0 +1,142 @@
+{
+  "Save Session Progress": {
+    "prefix": ["/save", "/session", "save session"],
+    "body": [
+      "Save session progress"
+    ],
+    "description": "Trigger AI to save current session progress to project file"
+  },
+  "End Session": {
+    "prefix": ["/end", "end session"],
+    "body": [
+      "End session"
+    ],
+    "description": "Complete session with full summary, PR description, and git check"
+  },
+  "Session Status": {
+    "prefix": ["/status", "session status"],
+    "body": [
+      "Session status"
+    ],
+    "description": "Preview what would be saved in current session"
+  },
+  "Begin Project": {
+    "prefix": ["/project", "/begin-project", "begin project", "start project"],
+    "body": [
+      "begin project"
+    ],
+    "description": "Initiate the full project lifecycle: contract definition, design, engineering, and testing"
+  },
+  "Continue Project": {
+    "prefix": "/continue",
+    "body": [
+      "Continue: ${1:project-name}"
+    ],
+    "description": "Resume work on an existing project"
+  },
+  "New Project": {
+    "prefix": "/new",
+    "body": [
+      "New: ${1:TICKET-XXXX-short-description}"
+    ],
+    "description": "Start a new project — will begin contract definition phase"
+  },
+  "List Projects": {
+    "prefix": "/list",
+    "body": [
+      "List projects"
+    ],
+    "description": "Show all active projects and their current phase"
+  },
+  "Session Log Entry": {
+    "prefix": "session-log",
+    "scope": "markdown",
+    "body": [
+      "### Session: ${1:${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}} (Developer: ${2:USERNAME})",
+      "",
+      "**${3:HH:MM} - ${4:Section Title}**",
+      "- ${5:Work completed}",
+      "",
+      "**Decisions Made**:",
+      "- ${6:Decision details}",
+      "",
+      "**Files Modified**:",
+      "- ${7:File paths}",
+      "",
+      "**Time Investment**: ${8:duration}  ",
+      "**Status**: ${9:Status update}",
+      ""
+    ],
+    "description": "Insert a session log entry template"
+  },
+  "Decision Record": {
+    "prefix": "decision",
+    "scope": "markdown",
+    "body": [
+      "### Decision ${1:00X}: ${2:Title} (${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE})",
+      "",
+      "**Context**: ${3:Why this decision was needed}",
+      "",
+      "**Decision**: ${4:What was decided}",
+      "",
+      "**Rationale**:",
+      "- ${5:Key reasoning points}",
+      "",
+      "**Alternatives Considered**:",
+      "1. **${6:Alternative 1}**: ${7:Why not chosen}",
+      "",
+      "**Consequences**:",
+      "- ✅ ${8:Positive outcomes}",
+      "- ⚠️ ${9:Trade-offs}",
+      ""
+    ],
+    "description": "Insert a technical decision record template"
+  },
+  "Work Item": {
+    "prefix": "workitem",
+    "scope": "markdown",
+    "body": [
+      "- [ ] ${1|🔴,🟡,🟢,🔵|} ${2|P1,P2,P3|}: ${3:Task description}"
+    ],
+    "description": "Insert a prioritized work item"
+  },
+  "Completed Item": {
+    "prefix": "done",
+    "scope": "markdown",
+    "body": [
+      "- [x] ✅ ${1:Task description} (${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE})"
+    ],
+    "description": "Insert a completed work item"
+  },
+  "Knowledge Base Entry": {
+    "prefix": "kb-entry",
+    "scope": "markdown",
+    "body": [
+      "## ${1:Pattern/Topic Name}",
+      "",
+      "**Category**: ${2|Patterns,Anti-Patterns,Gotchas,Solutions,Best Practices|}  ",
+      "**Discovered**: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE}  ",
+      "**Project**: [${3:project-name}](${3:project-name}.md)  ",
+      "**Tags**: ${4:tag1, tag2, tag3}",
+      "",
+      "### Problem",
+      "${5:What problem does this solve?}",
+      "",
+      "### Solution",
+      "${6:How to solve it}",
+      "",
+      "```${7:language}",
+      "${8:code example}",
+      "```",
+      "",
+      "### When to Use",
+      "- ${9:Use case 1}",
+      "",
+      "### Trade-offs",
+      "- ✅ ${10:Pros}",
+      "- ⚠️ ${11:Cons}",
+      ""
+    ],
+    "description": "Insert a knowledge base entry template"
+  }
+}

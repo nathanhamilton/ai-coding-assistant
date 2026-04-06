@@ -14,11 +14,12 @@ Instead of relying on ad hoc chat history, it gives your local repository a ligh
 
 ## What You Get
 
-- `ai-project-assist/`:
-  the template you copy into a target repo as `prompts/`
-- `ai-project-assist/.github/`:
+- `ai-assist-template/`:
+  the distributable source template you copy into a target repo as
+  `ai-project-assist/`
+- `ai-assist-template/.github/`:
   reusable Copilot instructions, prompts, agents, and skill templates
-- `ai-project-assist/.vscode/`:
+- `ai-assist-template/.vscode/`:
   local editor integration, snippets, and chat shortcuts
 - `.github/agents/ai-tooling-updater-agent.md`:
   a repo-level agent for syncing template improvements into this source repo
@@ -30,15 +31,15 @@ Instead of relying on ad hoc chat history, it gives your local repository a ligh
 From the target repository root:
 
 ```bash
-cp -r /path/to/ai-project-assist prompts
-cp -r /path/to/ai-project-assist/.github .
-cp -r /path/to/ai-project-assist/.vscode .
+cp -r /path/to/ai-assist-template ai-project-assist
+cp -r /path/to/ai-assist-template/.github .
+cp -r /path/to/ai-assist-template/.vscode .
 ```
 
 Then open the target repo in VS Code and tell Copilot:
 
 ```text
-Load prompts/SETUP.md and install this documentation system into the current repo.
+Load ai-project-assist/SETUP.md and install this documentation system into the current repo.
 Detect the language, framework, package manager, test runner, and UI stack from
 the codebase before asking follow-up questions.
 ```
@@ -58,15 +59,17 @@ After setup, the normal flow is:
 
 ```text
 .
+├── ai-assist-template/
 ├── ai-project-assist/
 ├── .github/
 └── .vscode/
 ```
 
-`ai-project-assist/` is the source template. When used in another repo, it becomes that repo's `prompts/` directory.
+`ai-assist-template/` is the source template. When used in another repo, it
+should be installed as that repo's `ai-project-assist/` directory.
 
 ## Start Here
 
-- See [ai-project-assist/README.md](ai-project-assist/README.md) for the template overview.
-- See [ai-project-assist/QUICK-START.md](ai-project-assist/QUICK-START.md) for the shortest install path.
-- See [ai-project-assist/SETUP.md](ai-project-assist/SETUP.md) for the stack-detection and customization workflow.
+- See [ai-assist-template/README.md](ai-assist-template/README.md) for the template overview.
+- See [ai-assist-template/QUICK-START.md](ai-assist-template/QUICK-START.md) for the shortest install path.
+- See [ai-assist-template/SETUP.md](ai-assist-template/SETUP.md) for the stack-detection and customization workflow.

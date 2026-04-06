@@ -36,7 +36,6 @@ Do not treat any single repository as globally canonical across invocations.
 Prefer syncing these areas when they are generic or documentation-oriented,
 and only when the path exists in the source repo:
 
-- `ai-assist-template/`
 - `ai-project-assist/`
 - `.github/agents/`
 - `.github/skills/`
@@ -47,11 +46,11 @@ and only when the path exists in the source repo:
 
 Do not overwrite repository-specific context unless the user explicitly asks:
 
-- `prompts/base-context.md`
-- `prompts/tech-stack.md`
-- `prompts/architecture.md`
-- `prompts/languages/*`
-- `prompts/projects/*`
+- `ai-project-assist/base-context.md`
+- `ai-project-assist/tech-stack.md`
+- `ai-project-assist/architecture.md`
+- `ai-project-assist/languages/*`
+- `ai-project-assist/projects/*`
 - `.github/copilot-instructions.md`
 - Root agents that contain stack-specific or team-specific customization
 
@@ -69,17 +68,17 @@ Follow this process every time:
    - careful merge required
    - skip because it is repo-specific
 4. Tell the user what will change if the sync is broad or risky.
-    - If the sync touches more than 3 files, introduces new files, or requires
-       manual merges, present a migration report before editing.
+      - If the sync touches more than 3 files, introduces new files, or requires
+         manual merges, present a migration report before editing.
 5. Apply the smallest reviewable diff.
 6. Run mandatory repo-localization cleanup on any copied or merged AI tooling.
 7. Verify that:
    - no placeholder text was introduced
    - file references still exist
    - repo-specific guidance was preserved
-   - imported examples were rewritten to this repo's conventions where needed
+      - imported examples were rewritten to this repo's conventions where needed
 8. Summarize what was synced, what was localized, and what was intentionally
-   skipped.
+    skipped.
 
 ## Mandatory Post-Sync Localization
 
@@ -94,7 +93,7 @@ when they were touched by the sync:
 
 - active `.github/` AI tooling docs
 - live `ai-project-assist/` docs that mirror template guidance
-- `ai-assist-template/` for future copies
+- `.vscode/` integration when command or prompt surfaces changed
 
 Do not stop after copying files if this localization review has not happened.
 
@@ -152,7 +151,7 @@ Quick sync still must:
 - Preserve project lifecycle files and active project history.
 - If the source and local file both changed materially, merge manually.
 - If a new agent or template file exists upstream, add it locally when it fits
-  this repo's structure.
+   this repo's structure.
 
 ## Example Invocations
 
