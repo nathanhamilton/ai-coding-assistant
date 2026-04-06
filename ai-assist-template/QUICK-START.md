@@ -8,9 +8,9 @@
 
 ```bash
 # In your target repo
-cp -r /path/to/ai-project-assist ai-project-assist
-cp -r /path/to/ai-project-assist/.github .
-cp -r /path/to/ai-project-assist/.vscode .
+cp -r /path/to/ai-assist-template ai-project-assist
+cp -r /path/to/ai-assist-template/.github .
+cp -r /path/to/ai-assist-template/.vscode .
 ```
 
 Then in VS Code Copilot Chat:

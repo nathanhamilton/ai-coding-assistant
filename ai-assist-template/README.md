@@ -13,6 +13,10 @@ This template provides a repo-agnostic documentation and AI-orchestrated
 project workflow that can be copied into an existing repository and adapted to
 that repository's actual stack.
 
+In this source repo, the distributable template folder is named
+`ai-assist-template/`. When installed into another repo, it should become that
+repo's `ai-project-assist/` folder.
+
 ### Core System
 - ✅ Project lifecycle management (creation → contract → design → code → archive)
 - ✅ Contract-first workflow before implementation
@@ -42,7 +46,7 @@ that repository's actual stack.
 
 ### Structure
 ```
-ai-project-assist/
+ai-assist-template/
 ├── README.md
 ├── SETUP.md
 ├── QUICK-START.md
@@ -79,9 +83,9 @@ ai-project-assist/
 ### Step 1: Copy the Template
 
 ```bash
-cp -r ai-project-assist /path/to/your-repo/ai-project-assist
-cp -r ai-project-assist/.github /path/to/your-repo/
-cp -r ai-project-assist/.vscode /path/to/your-repo/
+cp -r ai-assist-template /path/to/your-repo/ai-project-assist
+cp -r ai-assist-template/.github /path/to/your-repo/
+cp -r ai-assist-template/.vscode /path/to/your-repo/
 ```
 
 ### Step 2: Let Setup Detect the Stack

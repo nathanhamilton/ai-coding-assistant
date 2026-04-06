@@ -39,11 +39,11 @@ Prefer syncing these areas when they are generic or documentation-oriented:
 
 Do not overwrite repository-specific context unless the user explicitly asks:
 
-- `prompts/base-context.md`
-- `prompts/tech-stack.md`
-- `prompts/architecture.md`
-- `prompts/languages/*`
-- `prompts/projects/*`
+- `ai-project-assist/base-context.md`
+- `ai-project-assist/tech-stack.md`
+- `ai-project-assist/architecture.md`
+- `ai-project-assist/languages/*`
+- `ai-project-assist/projects/*`
 - `.github/copilot-instructions.md`
 - Root agents that contain stack-specific or team-specific customization
 
@@ -82,5 +82,5 @@ Follow this process every time:
 ```text
 @ai-tooling-updater sync
 @ai-tooling-updater sync from owner/repo
-@ai-tooling-updater refresh prompts template from owner/repo
+@ai-tooling-updater refresh ai assist template from owner/repo
 ```
