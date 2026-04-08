@@ -1,70 +1,50 @@
-# [Repository Name] — Tech Stack
+# AI Coding Assistant — Tech Stack
 
-**Last Updated:** [YYYY-MM-DD]
-
----
-
-## 🏗️ Core Technologies
-
-- **[Primary Language]:** [Version] — [What it's used for]
-- **[Framework]:** [Version] — [Web framework, etc.]
-- **Database:** [Type & Version] — [Primary data store]
-- **Cache:** [If applicable] — [Redis, Memcached, etc.]
-- **Background Jobs:** [If applicable] — [Queue, scheduler, or worker system]
-- **Authentication:** [System used] — [Session auth, token auth, SSO, etc.]
-- **Testing:** [Framework] — [Primary automated test stack]
+**Last Updated:** 2026-04-08
 
 ---
 
-## 📦 Key Dependencies
+## 🏗️ Core "Stack"
 
-List all critical dependencies developers need to know about:
+This repo contains no application code. It is a documentation and AI tooling system.
 
-- **[Gem/Package 1]:** [Purpose]
-- **[Gem/Package 2]:** [Purpose]
-- **[Gem/Package 3]:** [Purpose]
-
----
-
-## 🖥️ Frontend Stack
-
-- **[Framework/Library 1]:** [Purpose]
-- **[Framework/Library 2]:** [Purpose]
-- **[CSS Framework]:** [Purpose]
-- **[JS Tool]:** [Purpose]
+- **Content format:** Markdown (`.md`) — all context files, templates, agents, skills, prompts
+- **Config format:** JSON (`.vscode/settings.json`) and YAML frontmatter in agent/skill/prompt files
+- **Primary AI tool:** GitHub Copilot in VS Code
+- **No runtime, no package manager, no database, no test runner**
 
 ---
 
-## 🧪 Testing Stack
+## 🤖 AI Tooling Layer
 
-- **[Test Framework]:** [Primary testing framework]
-- **[Integration/System]:** [System/E2E testing]
-- **[Fixtures/Factories]:** [Test data generation]
-- **[Matchers]:** [Assertion library or matchers]
+- **GitHub Copilot:** the primary AI assistant this system targets
+- **VS Code:** the editor host; agent and skill files are discovered via `.github/` and `.vscode/`
+- **`.github/copilot-instructions.md`:** always-on system prompt that Copilot reads for every session
+- **`.github/agents/*.md`:** specialist agent definitions loaded via `@agent-name` in Copilot Chat
+- **`.github/skills/*.md`:** skill files loaded on demand by agents or by user instruction
+- **`.github/prompts/*.md`:** slash-command prompt files (`/project`, `/begin-project`, etc.)
+- **`.vscode/settings.json`:** editor-level Copilot configuration
 
 ---
 
-## 🔒 Authentication & Authorization
+## 📦 Key Files
 
-- **Authentication:** [Gem/Library] — [How users authenticate]
-- **Authorization:** [Gem/Library] — [How access is controlled]
+- **`ai-assist-template/SETUP.md`:** the machine-readable setup instruction file for downstream installs
+- **`ai-assist-template/base-context.md`:** template for repo-specific context; filled during setup
+- **`ai-assist-template/tech-stack.md`:** template for stack documentation; filled during setup
+- **`ai-assist-template/architecture.md`:** template for architectural boundaries; filled during setup
+- **`.github/skills/implementation-pipeline/SKILL.md`:** workflow skill for scoped implementation work
+- **`.github/agents/ai-tooling-updater-agent.md`:** agent for syncing this template to downstream repos
 
 ---
 
 ## ⚙️ Development Environment
 
-- **Container:** [Docker/Docker Compose if applicable]
-- **Package Manager:** [bundler, npm, pip, etc.]
-- **Version Manager:** [rbenv, nvm, pyenv, etc.]
-- **Local Setup:** [Brief description or link to docs]
+- **OS:** macOS (solo developer)
+- **Editor:** VS Code with GitHub Copilot Chat extension
+- **No install step required** — clone the repo and open in VS Code
+- **Validation:** manual inspection; grep for `[` to find unfilled placeholders
 
 ---
 
-## 🔗 External Integrations
-
-- **[Service 1]:** [Purpose and brief description]
-- **[Service 2]:** [Purpose and brief description]
-
----
-
-**Note:** Keep this file updated as dependencies change. Reference it in `base-context.md` rather than duplicating content.
+**Note:** Keep this file updated when the AI tooling layer gains new components (new tools, new config files, new agent types).

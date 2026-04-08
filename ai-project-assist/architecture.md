@@ -1,461 +1,166 @@
-# Architecture Documentation
+# Architecture — AI Coding Assistant
 
-**Repository:** [org/repo-name]  
-**Last Updated:** [YYYY-MM-DD]
+**Repository:** nathanhamilton/ai-coding-assistant  
+**Last Updated:** 2026-04-08
 
 ---
 
 ## 🏗️ System Architecture
 
-[Replace with a high-level description of the application architecture]
-
-### Architecture Diagram
+This repo has no application runtime, server, or database. Its architecture is a **two-layer file system** that separates the distributable template from the installed instance, with AI integration via `.github/` and editor integration via `.vscode/`.
 
 ```
-[Create ASCII diagram or reference external diagram]
-
-Example:
-┌──────────────┐
-│   Client     │
-└──────┬───────┘
-       │
-       v
-┌──────────────┐     ┌──────────────┐
-│   Load       │────>│   App        │
-│   Balancer   │     │   Servers    │
-└──────────────┘     └──────┬───────┘
-                            │
-                            v
-                     ┌──────────────┐
-                     │   Database   │
-                     └──────────────┘
+┌─────────────────────────────────────────────────┐
+│                ai-coding-assistant/             │
+│                                                 │
+│  ┌──────────────────────┐  ┌──────────────────┐ │
+│  │  ai-assist-template/ │  │ ai-project-assist│ │
+│  │  (distributable      │  │ (reference       │ │
+│  │   source template)   │  │  installation)   │ │
+│  └──────────┬───────────┘  └──────────────────┘ │
+│             │ copied into target repos           │
+│             ▼                                   │
+│  ┌──────────────────────┐                       │
+│  │  .github/            │  AI integration layer │
+│  │  ├── copilot-instruc │  always-on prompt     │
+│  │  ├── agents/         │  specialist agents    │
+│  │  ├── skills/         │  reusable workflows   │
+│  │  └── prompts/        │  slash commands       │
+│  └──────────────────────┘                       │
+│  ┌──────────────────────┐                       │
+│  │  .vscode/            │  Editor integration   │
+│  └──────────────────────┘                       │
+└─────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## 📁 Directory Structure
 
-### Application Structure
-
 ```
-[repo-name]/
-├── [dir1]/                      # [Description]
-│   ├── [subdir1]/              # [Description]
-│   │   └── [pattern].ext       # [Description]
-│   └── [subdir2]/              # [Description]
-│       └── [pattern].ext       # [Description]
-├── [dir2]/                      # [Description]
-│   ├── [subdir1]/              # [Description]
-│   └── [subdir2]/              # [Description]
-├── [config-dir]/                # [Configuration files]
-│   ├── [file1].ext             # [Description]
-│   └── [file2].ext             # [Description]
-├── [test-dir]/                  # [Test suite]
-│   ├── [test-subdir1]/         # [Description]
-│   └── [test-subdir2]/         # [Description]
-└── [build-dir]/                 # [Build artifacts]
+ai-coding-assistant/
+├── ai-assist-template/          # Distributable source template
+│   ├── README.md
+│   ├── SETUP.md                 # Machine-readable install instructions
+│   ├── QUICK-START.md
+│   ├── base-context.md          # Template: repo context (fill during setup)
+│   ├── tech-stack.md            # Template: stack docs (fill during setup)
+│   ├── architecture.md          # Template: architecture docs (fill during setup)
+│   ├── standards.md             # Generic engineering standards
+│   ├── project-init-guide.md    # How to start tracked work
+│   ├── project-lifecycle.md     # Lifecycle stages (contract → archive)
+│   ├── emoji-guide.md
+│   ├── team-collaboration.md
+│   ├── languages/
+│   │   └── _template.md         # Template for per-language guides
+│   ├── projects/
+│   │   ├── _index.md            # Active project index
+│   │   ├── _knowledge-base.md   # Cross-project learnings
+│   │   ├── TEMPLATE.md          # Project file template
+│   │   ├── project.md           # Example project file
+│   │   └── archive/
+│   │       ├── QUARTER-SUMMARY-TEMPLATE.md
+│   │       ├── README.md
+│   │       └── sessions/
+│   └── .github/                 # Template AI integration files (copy to repo root)
+│       ├── copilot-instructions.md
+│       ├── agents/
+│       ├── prompts/
+│       └── skills/
+├── ai-project-assist/           # Reference installation (this repo's instance)
+│   └── (same structure, filled with repo-specific content)
+├── .github/                     # Active AI integration for this repo
+│   ├── copilot-instructions.md
+│   ├── agents/
+│   │   └── ai-tooling-updater-agent.md
+│   └── skills/
+│       └── implementation-pipeline/
+│           └── SKILL.md
+├── .vscode/
+│   └── settings.json
+└── README.md
 ```
 
 ### Directory Conventions
 
-#### `[dir1]/` - [Primary application code]
-[Describe what goes here and organizational patterns]
+#### `ai-assist-template/` — Canonical distributable source
+All files in this directory must remain generic after editing. Content that references specific repos, people, or stacks must be parameterized or documented as "fill during setup." This is what downstream repos receive.
 
-**Subdirectories:**
-- **`[subdir1]/`** - [Purpose]
-- **`[subdir2]/`** - [Purpose]
+#### `ai-project-assist/` — Reference installation
+This is the active AI context folder for *this* repo. It doubles as a reference for what a fully set-up installation looks like. Keep `base-context.md`, `tech-stack.md`, and `architecture.md` accurate for this repo.
 
-#### `[dir2]/` - [Secondary components]
-[Describe what goes here and organizational patterns]
+#### `.github/agents/*.md`
+Each file is a named agent. The filename becomes the `@mention` handle in Copilot Chat. YAML frontmatter defines the `name` and `description` fields that Copilot uses for agent selection.
 
-#### `[config-dir]/` - [Configuration]
-[Describe configuration structure]
-
-#### `[test-dir]/` - [Tests]
-[Describe test organization]
+#### `.github/skills/*.md` or `skills/*/SKILL.md`
+Skills are loaded explicitly by agents or users. Each skill folder contains a `SKILL.md` with a YAML frontmatter `name` and `description`, followed by the workflow or guidance content.
 
 ---
 
 ## 🎨 Key Architectural Patterns
 
-### Pattern 1: [Name] (e.g., Service Objects, Repository Pattern)
+### Template / Instance Separation
 
-**Purpose:** [What problem this pattern solves]
+The distributable source (`ai-assist-template/`) and the installed instance (`ai-project-assist/`) are always kept as separate directories. The template stays generic; the instance is repo-specific. Improvements flow template → downstream repos via `@ai-tooling-updater`. Never merge repo-specific content back into the template.
 
-**When to use:**
-- [Use case 1]
-- [Use case 2]
-- [Use case 3]
+### Detection-First Setup
 
-**Structure:**
-```[language]
-# Example code showing the pattern
-class ExampleService
-  def initialize(dependencies)
-    @dependencies = dependencies
-  end
-  
-  def call
-    # Implementation
-  end
-end
-```
+SETUP.md instructs the AI to inspect repository manifests, CI files, and directory structure before asking questions. This prevents generic setup defaults from leaking into installed instances.
 
-**Location:** `[directory-path]/`
+### Contract Before Code
 
-**Examples in codebase:**
-- `[file1]` - [Description]
-- `[file2]` - [Description]
+The `/project` and `/begin-project` commands route all new work through a contract phase before reaching implementation agents. No agent writes code without an agreed written contract.
+
+### YAML Frontmatter as Configuration
+
+Agents, skills, and prompts use YAML frontmatter to declare their `name`, `description`, `applyTo`, and `alwaysApply` properties. Copilot reads these to decide when to load each file. This is the only "config" layer in this repo.
 
 ---
 
-### Pattern 2: [Name]
+## 🔄 Key Flows
 
-**Purpose:** [What problem this pattern solves]
-
-**When to use:**
-- [Use case 1]
-- [Use case 2]
-
-**Structure:**
-```[language]
-# Example code showing the pattern
-```
-
-**Location:** `[directory-path]/`
-
----
-
-### Pattern 3: [Name]
-
-**Purpose:** [What problem this pattern solves]
-
-**When to use:**
-- [Use case 1]
-- [Use case 2]
-
-**Structure:**
-```[language]
-# Example code showing the pattern
-```
-
-**Location:** `[directory-path]/`
-
----
-
-## 🔄 Data Flow
-
-### Request/Response Flow
-
-1. **[Step 1]:** [Description]
-2. **[Step 2]:** [Description]
-3. **[Step 3]:** [Description]
-4. **[Step 4]:** [Description]
+### Template Distribution Flow
 
 ```
-[Create flow diagram if helpful]
+ai-assist-template/ (edit here)
+    ↓  cp -r  (user copies to target repo)
+[target-repo]/ai-project-assist/
+    ↓  Load SETUP.md in Copilot
+Detect stack → Fill placeholders → Done
+```
 
-Client Request
+### Template Sync Flow (after template evolves)
+
+```
+User: "@ai-tooling-updater sync from nathanhamilton/ai-coding-assistant"
     ↓
-[Component 1]
+Agent fetches source repo via GitHub MCP
     ↓
-[Component 2]
+Merges generic changes into target repo
     ↓
-[Component 3]
+Preserves repo-specific customizations
+```
+
+### Project Lifecycle Flow
+
+```
+/project or /begin-project
     ↓
-Response
-```
-
-### Background Job Flow
-
-[If applicable - describe async processing]
-
-1. **[Trigger]:** [What triggers background jobs]
-2. **[Queue]:** [How jobs are queued]
-3. **[Processing]:** [How jobs are processed]
-4. **[Completion]:** [What happens when done]
-
----
-
-## 🗃️ Data Model
-
-### Core Entities
-
-#### Entity 1: [Name]
-**Purpose:** [What this entity represents]
-
-**Key attributes:**
-- `attribute1` - [Description]
-- `attribute2` - [Description]
-
-**Relationships:**
-- Has many: [Entity2]
-- Belongs to: [Entity3]
-
----
-
-#### Entity 2: [Name]
-**Purpose:** [What this entity represents]
-
-**Key attributes:**
-- `attribute1` - [Description]
-- `attribute2` - [Description]
-
-**Relationships:**
-- Belongs to: [Entity1]
-
----
-
-### Database Schema Conventions
-
-[Describe naming conventions, indexing strategy, etc.]
-
-- **Table naming:** [Convention]
-- **Primary keys:** [Convention]
-- **Foreign keys:** [Convention]
-- **Indexes:** [When and what to index]
-- **Timestamps:** [Convention for created_at, updated_at]
-
----
-
-## 🌐 API Architecture
-
-### API Design Principles
-
-- [Principle 1: e.g., RESTful conventions]
-- [Principle 2: e.g., Versioning strategy]
-- [Principle 3: e.g., Response format]
-
-### Endpoint Structure
-
-```
-[Base URL]/[version]/[resource]/[id]
-```
-
-**Example:**
-```
-https://api.example.com/v1/users/123
-```
-
-### Authentication
-
-- **Method:** [JWT, OAuth, API Keys, etc.]
-- **Header:** `Authorization: Bearer [token]`
-- **Token lifecycle:** [How tokens are issued/refreshed]
-
-### Response Format
-
-```json
-{
-  "data": {
-    "id": 123,
-    "type": "resource",
-    "attributes": {
-      "field1": "value1"
-    }
-  },
-  "meta": {
-    "timestamp": "2026-01-05T10:00:00Z"
-  }
-}
-```
-
-### Error Handling
-
-```json
-{
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human-readable message",
-    "details": {
-      "field": "additional context"
-    }
-  }
-}
+@contract-agent (scope, constraints, P0s)
+    ↓
+@design-agent (if UI involved)
+    ↓
+@senior-engineer (plan → approval → implementation)
+    ↓
+@test-agent (tests alongside or after)
+    ↓
+@docs-agent (if needed)
+    ↓
+Archive project file
 ```
 
 ---
 
-## 🔐 Security Architecture
+**Last Reviewed:** 2026-04-08  
+**Maintained by:** Solo developer
 
-### Authentication Flow
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-### Authorization Strategy
-
-- **Model:** [RBAC, ABAC, etc.]
-- **Implementation:** [How it's implemented]
-- **Roles:** [List of roles if applicable]
-
-### Security Layers
-
-1. **[Layer 1]:** [Description]
-2. **[Layer 2]:** [Description]
-3. **[Layer 3]:** [Description]
-
----
-
-## 🚀 Deployment Architecture
-
-### Infrastructure
-
-- **Hosting:** [AWS, GCP, Azure, Heroku, etc.]
-- **Services used:** [List key services]
-- **Regions:** [Where deployed]
-
-### Deployment Pipeline
-
-```
-[Source] → [CI] → [Build] → [Test] → [Deploy]
-```
-
-1. **[Stage 1]:** [Description]
-2. **[Stage 2]:** [Description]
-3. **[Stage 3]:** [Description]
-
-### Environments
-
-| Environment | Purpose | URL | Auto-deploy? |
-|------------|---------|-----|--------------|
-| Development | Local dev | localhost | N/A |
-| Staging | Pre-production testing | [URL] | [Yes/No] |
-| Production | Live system | [URL] | [Yes/No] |
-
----
-
-## 📦 Dependencies & Services
-
-### External Services
-
-#### Service 1: [Name]
-- **Purpose:** [What it does]
-- **Integration point:** [Where/how integrated]
-- **Failure mode:** [What happens if it's down]
-
-#### Service 2: [Name]
-- **Purpose:** [What it does]
-- **Integration point:** [Where/how integrated]
-- **Failure mode:** [What happens if it's down]
-
-### Internal Dependencies
-
-#### Service A: [Name]
-- **Purpose:** [What it provides]
-- **Communication:** [API, message queue, etc.]
-- **Repository:** [Link]
-
----
-
-## 🔧 Configuration Management
-
-### Environment Variables
-
-Critical environment variables:
-
-- `VAR_1` - [Purpose]
-- `VAR_2` - [Purpose]
-- `VAR_3` - [Purpose]
-
-### Configuration Files
-
-- `[file1]` - [Purpose]
-- `[file2]` - [Purpose]
-
-### Secrets Management
-
-- **Storage:** [Where secrets are stored]
-- **Access:** [How to access secrets]
-- **Rotation:** [How secrets are rotated]
-
----
-
-## 📊 Performance Considerations
-
-### Caching Strategy
-
-- **What's cached:** [List cached items]
-- **Cache invalidation:** [Strategy]
-- **Cache technology:** [Redis, Memcached, etc.]
-
-### Database Optimization
-
-- **Query optimization:** [Approach]
-- **Indexing strategy:** [What's indexed]
-- **Connection pooling:** [Configuration]
-
-### Scaling Strategy
-
-- **Horizontal scaling:** [How to scale out]
-- **Vertical scaling:** [Limits and approach]
-- **Bottlenecks:** [Known limitations]
-
----
-
-## 🔍 Monitoring & Debugging
-
-### Key Metrics
-
-1. **[Metric 1]:** [What it measures, threshold]
-2. **[Metric 2]:** [What it measures, threshold]
-3. **[Metric 3]:** [What it measures, threshold]
-
-### Logging Strategy
-
-- **Log levels:** [How levels are used]
-- **Log aggregation:** [Where logs go]
-- **Log retention:** [How long kept]
-
-### Debugging Tools
-
-- **[Tool 1]:** [Purpose and usage]
-- **[Tool 2]:** [Purpose and usage]
-
----
-
-## 🧩 Extension Points
-
-### Adding New Features
-
-[Describe the general approach for extending the system]
-
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-### Plugin/Module System
-
-[If applicable - describe how system is extended]
-
----
-
-## 📚 Additional Resources
-
-### Architecture Decision Records (ADRs)
-
-- [ADR-001: Decision Title](link)
-- [ADR-002: Decision Title](link)
-
-### Related Documentation
-
-- [System Design Doc](link)
-- [API Documentation](link)
-- [Deployment Guide](link)
-
-### Diagrams
-
-- [Sequence Diagrams](link)
-- [Entity Relationship Diagrams](link)
-- [Infrastructure Diagrams](link)
-
----
-
-**Note:** This architecture documentation should be updated whenever significant architectural changes are made. Keep it in sync with the actual implementation.
-
----
-
-**Last Reviewed:** [YYYY-MM-DD]  
-**Next Review Due:** [YYYY-MM-DD]  
-**Maintained by:** [Team name]
