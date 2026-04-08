@@ -1,31 +1,34 @@
-# [Repository Name]
+# AI Coding Assistant
 
-**Repository:** [org/repo-name]  
-**Purpose:** [One-line description of what this application does]  
-**Team:** [Team name/size]  
-**Last Updated:** [YYYY-MM-DD]
+**Repository:** nathanhamilton/ai-coding-assistant  
+**Purpose:** A distributable AI project workflow system that turns GitHub Copilot into a repo-aware execution layer with persistent context, lifecycle management, specialist agents, and reusable skills.  
+**Team:** Solo developer  
+**Last Updated:** 2026-04-08
 
 ---
 
 ## 🎯 Project Overview
 
-[Replace with 2-3 paragraphs describing:
-- What problem this application solves
-- Who uses it (internal teams, customers, etc.)
-- Key business value it provides]
+This repo solves the "blank context" problem that makes AI coding assistants inconsistent. Without persistent project knowledge, assistants drift from the repo's real architecture, naming conventions, and testing patterns on every session.
+
+The system provides a distributable template (`ai-assist-template/`) that engineers copy into their own repos as `ai-project-assist/`. Once installed, GitHub Copilot in VS Code can reference repo-specific context files, follow a contract-first lifecycle, and use specialist agents and reusable skills — all versioned alongside the code they guide.
+
+This repo serves two roles: it is the source of the distributable template and it is itself a working installation of that template, making it the reference implementation.
 
 ### Key Features
 
-- **Feature 1:** [Description]
-- **Feature 2:** [Description]
-- **Feature 3:** [Description]
-- **Feature 4:** [Description]
+- **Distributable template:** `ai-assist-template/` is the source that target repos copy in and adapt
+- **Contract-first lifecycle:** `/project` and `/begin-project` enforce scope definition before implementation
+- **Specialist agents:** dedicated agents for project management, contracts, design, engineering, testing, docs, and API work
+- **Reusable skills:** scoped skill files (e.g., `implementation-pipeline`) that give Copilot focused workflows
+- **Detection-first setup:** SETUP.md instructs Copilot to inspect the repo before asking questions
+- **Self-maintaining:** `@ai-tooling-updater` agent syncs template improvements across repos
 
 ### Critical Workflows
 
-1. **Workflow 1:** [Brief description]
-2. **Workflow 2:** [Brief description]
-3. **Workflow 3:** [Brief description]
+1. **Template distribution:** copy `ai-assist-template/` into a target repo, run the SETUP.md flow to detect the stack and fill placeholders
+2. **Project lifecycle:** `/project` → contract → design → implementation → test → archive
+3. **Template evolution:** improve `ai-assist-template/`, sync downstream repos via `@ai-tooling-updater`
 
 ---
 
@@ -40,84 +43,65 @@ and reference it here rather than duplicating content.
 ## 📁 Repository Structure
 
 ```
-[repo-name]/
-├── [dir1]/              # Description
-│   ├── [subdir]/       # Description
-│   └── [file.ext]      # Description
-├── [dir2]/              # Description
-├── [config-dir]/        # Configuration
-├── [test-dir]/          # Tests
-└── README.md           # Project documentation
+ai-coding-assistant/
+├── ai-assist-template/    # Distributable source template
+├── ai-project-assist/     # Installed instance for this repo (reference implementation)
+├── .github/
+│   ├── agents/            # Specialist agent definitions
+│   ├── skills/            # Reusable skill files
+│   └── copilot-instructions.md
+├── .vscode/
+│   └── settings.json
+└── README.md
 ```
 
 ### Important Directories
 
-- **`[dir1]/`** - [What this directory contains and its purpose]
-- **`[dir2]/`** - [What this directory contains and its purpose]
-- **`[config-dir]/`** - [Configuration files]
-- **`[test-dir]/`** - [Test suite]
+- **`ai-assist-template/`** — The canonical distributable template. Changes here flow to downstream repos via the updater agent.
+- **`ai-project-assist/`** — The working installation for this repo. Serves as the reference for how the template should look once set up.
+- **`.github/agents/`** — Agent definition files that Copilot loads as specialist modes.
+- **`.github/skills/`** — Skill files that encode focused, reusable workflows (e.g., `implementation-pipeline`).
+- **`.vscode/`** — VS Code settings that improve the local Copilot experience.
 
 ---
 
 ## 🎨 Architecture Patterns
 
-### Pattern 1: [Name]
+### Pattern 1: Template / Instance Separation
 
-[Brief description of the pattern and when to use it]
+The distributable source (`ai-assist-template/`) is always kept generic and placeholder-free after distribution. The installed instance (`ai-project-assist/`) is repo-specific. Improvements flow from the template outward — never the reverse.
 
-**Example:**
-```[language]
-# Code example showing the pattern
-```
+### Pattern 2: Detection Before Questions
 
-### Pattern 2: [Name]
+Setup instructions always ask the AI to inspect the repo's files (manifests, CI configs, directory structure) before prompting the user. This avoids redundant setup questions and ensures the installed system reflects the actual repo.
 
-[Brief description of the pattern and when to use it]
+### Pattern 3: Contract Before Code
 
-**Example:**
-```[language]
-# Code example showing the pattern
-```
-
-### Pattern 3: [Name]
-
-[Brief description of the pattern and when to use it]
+No implementation begins without an agreed written contract. The `/project` lifecycle enforces this by routing new work through `@contract-agent` before reaching `@senior-engineer`.
 
 ---
 
 ## 🔒 Security Considerations
 
-### Authentication & Authorization
+This repo contains no application code, credentials, secrets, or user data. All files are Markdown and configuration.
 
-- **Authentication Method:** [How users/services authenticate]
-- **Authorization Pattern:** [RBAC, policies, etc.]
-- **Token Management:** [JWT, session-based, etc.]
-
-### Security Best Practices
-
-- [Practice 1]
-- [Practice 2]
-- [Practice 3]
-
-### Sensitive Data
-
-- **Secrets Management:** [Where secrets are stored - ENV vars, vault, etc.]
-- **PII Handling:** [How personally identifiable information is handled]
-- **Compliance:** [GDPR, FERPA, SOC2, etc. if applicable]
+- Do not embed API keys or tokens in prompt or instruction files.
+- Treat any downstream repo's `.github/copilot-instructions.md` as potentially public — avoid hard-coding internal hostnames, org structure, or security policies.
+- Agent and skill files should not include real credentials even as examples.
 
 ---
 
-## 🧪 Testing Standards
+## 🧪 Validation
 
-### Test Types
+This repo has no automated test suite. Validation is done by inspection:
 
-- **Unit Tests:** [Coverage target, what to test]
-- **Integration Tests:** [What they cover]
-- **Feature/E2E Tests:** [If applicable]
-
-### Running Tests
+- **Template correctness:** no placeholder text (`[brackets]`) should remain in a distributed copy after setup runs
+- **File references:** verify links between context files (`base-context.md` → `tech-stack.md` → `architecture.md`) resolve correctly
+- **Agent/skill loading:** open the repo in VS Code and confirm Copilot can @-mention agents and load skill files
 
 ```bash
+# Check for unfilled placeholders across ai-project-assist/
+grep -r '\[' ai-project-assist/ --include='*.md' | grep -v '^Binary'
 # Run all tests
 [command]
 
