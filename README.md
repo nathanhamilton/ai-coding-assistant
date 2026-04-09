@@ -17,26 +17,31 @@ This is not about replacing engineering judgment. It is about making repo-define
 
 ## How To Use It In A Local Repo
 
-From the target repository root:
+### Step 1 — Clone this repo
 
 ```bash
-cp -r /path/to/ai-assist-template ai-project-assist
-cp -r /path/to/ai-assist-template/.github .
-cp -r /path/to/ai-assist-template/.vscode .
-cp /path/to/ai-assist-template/CLAUDE.md .
-cp -r /path/to/ai-assist-template/.claude .
-cp -r /path/to/ai-assist-template/.cursor .
+git clone https://github.com/nathanhamilton/ai-coding-assistant.git
 ```
 
-Then open the target repo in your AI tool and run:
+### Step 2 — Copy the template into your target repo
+
+From inside your target repository root, copy the `ai-assist-template/` directory across:
+
+```bash
+cp -r /path/to/ai-coding-assistant/ai-assist-template ./ai-assist-template
+```
+
+That's the only file operation needed. Do not rename it or copy individual subdirectories — leave it as `ai-assist-template/` at the root.
+
+### Step 3 — Run setup in your AI tool
+
+Open the target repo in your AI tool (VS Code/Copilot, Claude Code, Cursor, or Conductor) and send this message in chat:
 
 ```text
-Load ai-project-assist/SETUP.md and install this documentation system into the current repo.
-Detect the language, framework, package manager, test runner, and UI stack from
-the codebase before asking follow-up questions.
+Load ai-assist-template/SETUP.md and install this tool into the current repo.
 ```
 
-The setup flow inspects the repo first, then adapts the copied files to the stack and conventions that actually exist. All supported AI tools are configured automatically — no tool-specific setup step needed.
+SETUP.md takes it from there. It will inspect the codebase, detect the stack, generate the repo-specific config files (`ai-project-assist/`, `.github/`, `CLAUDE.md`, `.claude/`, `.cursor/`, `.vscode/`), and walk you through any decisions it cannot infer automatically.
 
 ## Why It Works
 
