@@ -114,3 +114,25 @@ Get approval before:
 
 This repo contains no secrets. Do not embed API keys, tokens, hostnames, or org-internal
 details in any file, including agent and skill examples.
+
+---
+
+## Multi-Tool Compatibility
+
+This system supports VS Code/Copilot, Claude Code, Cursor, and Conductor out of the box.
+All tools share the same single source of truth in `.github/`.
+
+| Tool | Entrypoint |
+|---|---|
+| VS Code / Copilot | `.github/copilot-instructions.md` (this file), `.github/agents/`, `.github/prompts/`, `.github/skills/` |
+| Claude Code | `CLAUDE.md` → imports this file; `.claude/commands/` → wraps `.github/prompts/` |
+| Cursor | `.cursor/rules/ai-project-assist.mdc` → imports this file |
+| Conductor | `CLAUDE.md` + `.claude/commands/` (Conductor uses Claude Code's format natively) |
+
+### Unrecognised Tool Detection
+
+If operating in a tool not listed above, notify the user:
+
+> "I don't see a configuration for your AI tool in this repo. Would you like
+> me to generate one? I'll create the appropriate entrypoint files so this
+> system works natively with [tool name]."

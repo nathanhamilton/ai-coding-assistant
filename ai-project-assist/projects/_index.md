@@ -1,12 +1,12 @@
 # Project Index
 
-**Last Updated:** [To be set during setup]
+**Last Updated:** 2026-04-09
 
 ---
 
 ## 📊 Statistics
 
-- **Active Projects:** 0
+- **Active Projects:** 1
 - **Recently Completed:** 0
 - **Total Archived:** 0
 
@@ -14,7 +14,10 @@
 
 ## 🟢 Active Projects
 
-[No projects yet — projects will be added as work begins]
+- **task-2026-04-09-multitool-compatability** — Cross-platform AI tooling compatibility
+	- **Phase:** Contract
+	- **Progress:** 10%
+	- **File:** `ai-project-assist/projects/task-2026-04-09-multitool-compatability.md`
 
 **To create your first project:**
 

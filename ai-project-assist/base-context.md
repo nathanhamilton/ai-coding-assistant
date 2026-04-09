@@ -20,8 +20,10 @@ This repo serves two roles: it is the source of the distributable template and i
 - **Distributable template:** `ai-assist-template/` is the source that target repos copy in and adapt
 - **Contract-first lifecycle:** `/project` and `/begin-project` enforce scope definition before implementation
 - **Specialist agents:** dedicated agents for project management, contracts, design, engineering, testing, docs, and API work
-- **Reusable skills:** scoped skill files (e.g., `implementation-pipeline`) that give Copilot focused workflows
-- **Detection-first setup:** SETUP.md instructs Copilot to inspect the repo before asking questions
+- **Reusable skills:** scoped skill files (e.g., `implementation-pipeline`) that give any AI tool focused workflows
+- **Multi-tool out of the box:** VS Code/Copilot, Claude Code, Cursor, and Conductor all work from a single installation with no extra setup
+- **Single source of truth:** `.github/` is the canonical home for all instructions; other tools import from it — no duplication
+- **Detection-first setup:** SETUP.md instructs the AI to inspect the repo before asking questions
 - **Self-maintaining:** `@ai-tooling-updater` agent syncs template improvements across repos
 
 ### Critical Workflows
@@ -46,10 +48,16 @@ and reference it here rather than duplicating content.
 ai-coding-assistant/
 ├── ai-assist-template/    # Distributable source template
 ├── ai-project-assist/     # Installed instance for this repo (reference implementation)
+├── CLAUDE.md              # Claude Code + Conductor entrypoint (imports .github/)
+├── .claude/
+│   └── commands/          # Slash commands for Claude Code and Conductor
+├── .cursor/
+│   └── rules/             # Cursor always-on rule (imports .github/)
 ├── .github/
-│   ├── agents/            # Specialist agent definitions
+│   ├── agents/            # Specialist agent definitions (VS Code @-mentions)
 │   ├── skills/            # Reusable skill files
-│   └── copilot-instructions.md
+│   ├── prompts/           # Slash commands / lifecycle prompts (VS Code)
+│   └── copilot-instructions.md  # Shared core — single source of truth
 ├── .vscode/
 │   └── settings.json
 └── README.md

@@ -17,13 +17,18 @@ This repo contains no application code. It is a documentation and AI tooling sys
 
 ## 🤖 AI Tooling Layer
 
-- **GitHub Copilot:** the primary AI assistant this system targets
-- **VS Code:** the editor host; agent and skill files are discovered via `.github/` and `.vscode/`
-- **`.github/copilot-instructions.md`:** always-on system prompt that Copilot reads for every session
-- **`.github/agents/*.md`:** specialist agent definitions loaded via `@agent-name` in Copilot Chat
-- **`.github/skills/*.md`:** skill files loaded on demand by agents or by user instruction
-- **`.github/prompts/*.md`:** slash-command prompt files (`/project`, `/begin-project`, etc.)
-- **`.vscode/settings.json`:** editor-level Copilot configuration
+This system is **multi-tool compatible** out of the box. All tools share a single source of truth in `.github/`; tool-specific entrypoints import from it rather than duplicating content.
+
+| Tool | Entrypoint | Format |
+|---|---|---|
+| VS Code / Copilot | `.github/copilot-instructions.md` | Always-on instructions |
+| VS Code / Copilot | `.github/agents/*.md` | `@agent-name` mentions |
+| VS Code / Copilot | `.github/prompts/*.md` | `/slash-command` prompts |
+| VS Code / Copilot | `.github/skills/` | On-demand skill files |
+| Claude Code | `CLAUDE.md` | `@`-imports `.github/copilot-instructions.md` |
+| Claude Code | `.claude/commands/*.md` | `@`-wraps `.github/prompts/` files |
+| Cursor | `.cursor/rules/ai-project-assist.mdc` | `alwaysApply: true`, imports `.github/copilot-instructions.md` |
+| Conductor | `CLAUDE.md` + `.claude/commands/` | Uses Claude Code format natively |
 
 ---
 
