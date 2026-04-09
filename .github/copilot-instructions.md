@@ -7,7 +7,7 @@ All content is Markdown and YAML config.
 
 ## About This Repository
 
-**Purpose:** A distributable AI project workflow system for GitHub Copilot in VS Code.  
+**Purpose:** A distributable AI project workflow system compatible with VS Code/Copilot, Claude Code, Cursor, and Conductor.  
 **Structure:** Two-layer — `ai-assist-template/` (distributable source) and `ai-project-assist/` (reference installation for this repo).  
 **Owner:** Solo developer.
 
