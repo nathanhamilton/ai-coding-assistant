@@ -69,13 +69,22 @@ ai-coding-assistant/
 │       └── skills/
 ├── ai-project-assist/           # Reference installation (this repo's instance)
 │   └── (same structure, filled with repo-specific content)
-├── .github/                     # Active AI integration for this repo
-│   ├── copilot-instructions.md
-│   ├── agents/
-│   │   └── ai-tooling-updater-agent.md
-│   └── skills/
-│       └── implementation-pipeline/
-│           └── SKILL.md
+├── CLAUDE.md                    # Claude Code + Conductor entrypoint (imports .github/)
+├── .claude/
+│   └── commands/                # Slash commands for Claude Code and Conductor
+│       ├── project.md           # @-wraps .github/prompts/project.prompt.md
+│       ├── begin-project.md
+│       ├── save.md
+│       ├── end.md
+│       └── review.md
+├── .cursor/
+│   └── rules/
+│       └── ai-project-assist.mdc  # Cursor always-on rule (imports .github/)
+├── .github/                     # Shared core — single source of truth
+│   ├── copilot-instructions.md  # VS Code always-on + multi-tool reference doc
+│   ├── agents/                  # @agent-name specialist agents (VS Code)
+│   ├── prompts/                 # /slash-command prompts (VS Code native)
+│   └── skills/                  # On-demand skill files
 ├── .vscode/
 │   └── settings.json
 └── README.md
@@ -94,6 +103,15 @@ Each file is a named agent. The filename becomes the `@mention` handle in Copilo
 
 #### `.github/skills/*.md` or `skills/*/SKILL.md`
 Skills are loaded explicitly by agents or users. Each skill folder contains a `SKILL.md` with a YAML frontmatter `name` and `description`, followed by the workflow or guidance content.
+
+#### `CLAUDE.md`
+Root-level entrypoint for Claude Code and Conductor. Uses `@.github/copilot-instructions.md` to import the shared core — no content duplication. Claude Code reads this automatically on startup.
+
+#### `.claude/commands/*.md`
+Slash commands for Claude Code and Conductor. Each file is a thin wrapper that uses `@.github/prompts/<name>.prompt.md` to source its content from the VS Code prompt files. Zero duplication.
+
+#### `.cursor/rules/ai-project-assist.mdc`
+Cursor always-on rule (`alwaysApply: true`). Imports the shared core via `@.github/copilot-instructions.md`. Cursor discovers this automatically when the workspace is opened.
 
 ---
 
@@ -118,6 +136,20 @@ Agents, skills, and prompts use YAML frontmatter to declare their `name`, `descr
 ---
 
 ## 🔄 Key Flows
+
+### Multi-Tool Dispatch Flow
+
+```
+Any AI tool opens the repo
+         ↓
+VS Code  → reads .github/copilot-instructions.md directly
+Claude Code → reads CLAUDE.md → @-imports .github/copilot-instructions.md
+Cursor   → reads .cursor/rules/ai-project-assist.mdc → imports .github/copilot-instructions.md
+Conductor → reads CLAUDE.md (same as Claude Code)
+Unknown tool → detects no config → prompts user to generate one
+         ↓
+All tools share the same skills, agents, and context docs
+```
 
 ### Template Distribution Flow
 

@@ -1,0 +1,56 @@
+---
+description: AI Project Assist — shared instructions, lifecycle, and working rules for this repo
+alwaysApply: true
+---
+
+@.github/copilot-instructions.md
+
+---
+
+## Using This System in Cursor
+
+All shared instructions, working rules, and source-of-truth hierarchy are
+loaded above from \`.github/copilot-instructions.md\`.
+
+### Prompt Files
+
+The project lifecycle prompts live in \`.github/prompts/\`. Open them directly
+or reference their content in chat:
+
+| Prompt file | What it does |
+|---|---|
+| \`.github/prompts/project.prompt.md\` | Start or resume a project (full lifecycle) |
+| \`.github/prompts/begin-project.prompt.md\` | Alias for project |
+| \`.github/prompts/save.prompt.md\` | Save session progress |
+| \`.github/prompts/end.prompt.md\` | End session with commit message |
+| \`.github/prompts/review.prompt.md\` | Code review against project standards |
+
+### Agent Files
+
+Specialist agents are defined in \`.github/agents/\`. Reference them when
+their domain fits the task:
+- \`@project-manager\` — lifecycle orchestration
+- \`@contract-agent\` — scope definition one question at a time
+- \`@senior-engineer\` — production implementation
+- \`@test-agent\` — test creation and review
+- \`@design-agent\` — UI/UX specs before implementation
+- \`@docs-agent\` — developer-facing documentation
+- \`@api-agent\` — backend/API endpoint work
+
+### Skills
+
+Skills live in \`.github/skills/\`. Reference by name:
+- \`implementation-pipeline\` — end-to-end workflow for scoped changes
+
+---
+
+## Unrecognised AI Tool Detection
+
+If you are operating in an AI tool that is not VS Code/Copilot, Claude Code,
+Cursor, or Conductor — no native config exists for that tool yet.
+
+Notify the user:
+
+> "I don't see a configuration for your AI tool in this repo. Would you like
+> me to generate one? I'll create the appropriate entrypoint files so this
+> system works natively with [tool name]."
