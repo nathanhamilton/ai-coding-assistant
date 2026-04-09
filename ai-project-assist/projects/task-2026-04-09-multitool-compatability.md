@@ -1,15 +1,15 @@
 # task-2026-04-09-multitool-compatability: Cross-platform AI tooling compatibility
 
-**Status:** Planning
+**Status:** Complete
 **Created:** 2026-04-09
 **Last Updated:** 2026-04-09
-**Branch:** `ai-updates`
+**Branch:** `feat/multi-tool-compatability`
 
 ---
 
 ## Contract
 
-**Status:** Awaiting approval
+**Status:** Awaiting approval → ✅ Agreed 2026-04-09
 
 ---
 
@@ -97,10 +97,18 @@ Single-source shared core (skills, agents, instructions) with thin, tool-native 
 - [ ] Identify the shared-core versus tool-specific boundaries
 
 ### Phase 2: Implementation
-- [ ] Pending contract approval
+- [x] CLAUDE.md — Claude Code + Conductor entrypoint, @-imports .github/copilot-instructions.md
+- [x] .claude/commands/ — 5 slash commands, each @-wrapping the matching .github/prompts/ file
+- [x] .cursor/rules/ai-project-assist.mdc — Cursor alwaysApply rule importing shared core
+- [x] .github/copilot-instructions.md — added multi-tool table + unknown-tool detection
+- [x] ai-assist-template/ — all above mirrored so downstream repos inherit multi-tool support
+- [x] ai-project-assist context docs updated (base-context, tech-stack, architecture)
 
 ### Phase 3: Validation
-- [ ] Pending implementation plan
+- [x] All files present at repo root and mirrored in ai-assist-template/
+- [x] No placeholder brackets in new files
+- [x] Single source of truth confirmed — .github/ not duplicated
+- [x] Git status clean, pushed to feat/multi-tool-compatability
 
 ---
 
