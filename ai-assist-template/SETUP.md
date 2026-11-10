@@ -189,6 +189,35 @@ prefix and starts empty but valid.
 
 Ensure naming conventions match the target repo's workflow.
 
+### Step 6b: Install Autopilot (optional, recommended for GitHub repos)
+
+Autopilot lets the repo build itself from approved contracts: GitHub Actions
+plans, builds, gates, and auto-merges, and the owner approves only contracts and
+risky merges. Ask the user ONE question: "Install Autopilot (autonomous
+build → strict gate → auto-merge, with a live dashboard)? (yes / no)"
+
+If **yes**, copy from `ai-assist-template/` to the repo root, keeping paths:
+`.autopilot/`, `.github/workflows/autopilot-*.yml`, `scripts/autopilot/`,
+`dashboard/`, `.claude/commands/autopilot.md`, `.claude/commands/launch.md`,
+`.github/prompts/launch.prompt.md`, `.github/prompts/autopilot.prompt.md`.
+Append `.gitignore.autopilot` to the repo's `.gitignore`.
+
+Then fill in `.autopilot/config.json` from what you detected:
+
+- `owner` (the user's GitHub username) and `defaultBranch`
+- `commands`: the real `lint`, `typecheck`, `test`, `build`, and a `coverage`
+  command that writes **LCOV** to `coverage.lcovPath`. Look up the stack's LCOV
+  reporter (e.g. Jest `--coverage --coverageReporters=lcov`, Vitest
+  `--coverage.reporter=lcov`, pytest-cov `--cov-report=lcov:coverage/lcov.info`,
+  SimpleCov with simplecov-lcov, `go test -coverprofile` + gcov2lcov).
+- `coverage.include`: the source globs.
+- `riskyPaths`: keep the defaults that apply and add the repo's real
+  auth, payment, data-migration, and infrastructure locations.
+
+Run the commands once locally to prove they work, then
+`node scripts/autopilot/lint.mjs`. Finally, walk the user through
+`.autopilot/README.md` → Setup (GitHub App, secrets, `scripts/autopilot/setup.sh`).
+
 ### Step 7: Verify the Installation
 
 Check:
@@ -198,6 +227,8 @@ Check:
 3. The detected stack appears consistently in `base-context.md`,
    `tech-stack.md`, and agent/skill files.
 4. `/project` and related slash commands still reference real files.
+5. If Autopilot was installed: every required command in `.autopilot/config.json`
+   is real and passes, and `node scripts/autopilot/lint.mjs` passes.
 
 ---
 
@@ -226,6 +257,7 @@ Check:
 - [ ] placeholder text removed from customized files
 - [ ] generated skills match the detected stack
 - [ ] slash commands and paths verified
+- [ ] Autopilot installed and configured, or explicitly declined
 
 ---
 

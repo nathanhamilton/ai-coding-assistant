@@ -1,0 +1,103 @@
+# Autopilot fixer / conflict resolver / diagnostician for a PR that failed the gate.
+# Dispatched by the gate's next-step (fix, diagnose) or by the dispatcher (conflict).
+name: Autopilot Fix
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: Pull request number
+        required: true
+        type: number
+      mode:
+        description: fix | conflict | diagnose
+        required: true
+        type: choice
+        options: [fix, conflict, diagnose]
+      attempt:
+        description: Attempt number
+        required: false
+        type: number
+        default: 1
+
+concurrency:
+  group: autopilot-fix-${{ inputs.pr }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOPILOT_APP_ID }}
+          private-key: ${{ secrets.AUTOPILOT_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check out PR branch
+        id: prep
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          git config user.name "autopilot[bot]"
+          git config user.email "autopilot[bot]@users.noreply.github.com"
+          HEAD_REPO=$(gh pr view ${{ inputs.pr }} --json headRepositoryOwner,headRepository -q '.headRepositoryOwner.login + "/" + .headRepository.name')
+          if [ "$HEAD_REPO" != "${{ github.repository }}" ]; then echo "::error::Refusing to push to a fork"; exit 1; fi
+          BRANCH=$(gh pr view ${{ inputs.pr }} --json headRefName -q .headRefName)
+          git checkout -B "$BRANCH" "origin/$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "model=$(jq -r '.models.build // "claude-opus-5-5"' .autopilot/config.json)" >> "$GITHUB_OUTPUT"
+          echo "default=$(jq -r '.defaultBranch // "main"' .autopilot/config.json)" >> "$GITHUB_OUTPUT"
+          if [ "${{ inputs.mode }}" = "diagnose" ]; then echo "role=diagnostician" >> "$GITHUB_OUTPUT"; else echo "role=fixer" >> "$GITHUB_OUTPUT"; fi
+          SETUP=$(jq -r '.commands.setup // ""' .autopilot/config.json)
+          if [ -n "$SETUP" ] && [ "${{ inputs.mode }}" != "diagnose" ]; then bash -c "$SETUP"; fi
+      - name: Run agent
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
+          allowed_bots: '*'
+          prompt: |
+            You are the Autopilot **${{ steps.prep.outputs.role }}** for pull request #${{ inputs.pr }} in ${{ github.repository }}.
+            Mode: **${{ inputs.mode }}**. Attempt ${{ inputs.attempt }}.
+
+            1. Read `.autopilot/charter.md` (it overrides everything else).
+            2. Read `.autopilot/roles/${{ steps.prep.outputs.role }}.md` and follow it exactly.
+            3. Read the PR and its latest gate report: `gh pr view ${{ inputs.pr }} --comments`.
+
+            You are on the PR branch `${{ steps.prep.outputs.branch }}`; the default branch is `${{ steps.prep.outputs.default }}`.
+            For fix and conflict modes, commit your changes but do NOT push: the workflow pushes.
+            For diagnose mode, change no files and post your diagnosis with `gh pr comment ${{ inputs.pr }} --body-file <file>`.
+          claude_args: >-
+            --model ${{ steps.prep.outputs.model }}
+            --max-turns 150
+            --allowedTools "Read,Write,Edit,MultiEdit,Glob,Grep,Bash,WebFetch"
+      - name: Push fixes
+        if: inputs.mode != 'diagnose'
+        env:
+          BRANCH: ${{ steps.prep.outputs.branch }}
+        run: |
+          if [ "$(git rev-parse HEAD)" = "$(git rev-parse "origin/$BRANCH")" ]; then
+            echo "::warning::Fixer made no commits."
+            exit 0
+          fi
+          git push origin "HEAD:$BRANCH"
+      - name: Escalate on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          gh pr comment ${{ inputs.pr }} --body "❌ Autopilot ${{ inputs.mode }} run failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh pr edit ${{ inputs.pr }} --add-label autopilot:needs-human

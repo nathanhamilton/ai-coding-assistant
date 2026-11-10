@@ -84,6 +84,17 @@ it in, or tell me what to adjust."**
 
 ## After Contract Is Agreed
 
+**If Autopilot is installed** (`.autopilot/config.json` exists), ask ONE question:
+
+> "How should this be built — **Autopilot** (planned, built, reviewed, and
+> merged automatically through the strict gate; you're pulled in only for risky
+> merges or blockers) or **interactive** (step by step here)?"
+
+- **Autopilot** → follow `.github/prompts/launch.prompt.md`. The rest of this
+  lifecycle (design, engineering, security, debt, tests, docs) is then run by
+  Autopilot's roles and gate in GitHub Actions. Stop here.
+- **Interactive** → continue below.
+
 **If UI involved:** announce design phase, gather specs one question at a time,
 get "approved" confirmation.
 
@@ -169,3 +180,5 @@ deliverables is done.
 - `/save` — append session log to project file
 - `/end` — final log, commit message, PR description
 - `/review` — code review against project standards
+- `/launch` — hand an agreed contract to Autopilot
+- `/autopilot` — Autopilot status: what needs you, what's in flight

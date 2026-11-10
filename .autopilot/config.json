@@ -1,0 +1,83 @@
+{
+  "_comment": "Autopilot settings. PROTECTED: only the owner may change this file. See .autopilot/README.md for every option.",
+  "version": 1,
+  "owner": "nathanhamilton",
+  "defaultBranch": "master",
+  "maxConcurrent": 3,
+  "maxFixAttempts": 3,
+  "autoMergeHumanPrs": false,
+  "models": {
+    "plan": "claude-opus-5-5",
+    "build": "claude-opus-5-5",
+    "review": "claude-opus-5-5",
+    "secondOpinion": "claude-sonnet-5-5",
+    "retro": "claude-opus-5-5"
+  },
+  "commands": {
+    "setup": "",
+    "lint": "node scripts/autopilot/lint.mjs",
+    "typecheck": "",
+    "test": "node --test scripts/autopilot/test/",
+    "build": "node scripts/autopilot/cli.mjs dashboard --demo --out _site",
+    "coverage": "mkdir -p coverage && node --test --experimental-test-coverage --test-coverage-include='scripts/autopilot/lib/**' --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info scripts/autopilot/test/"
+  },
+  "coverage": {
+    "lcovPath": "coverage/lcov.info",
+    "include": [
+      "scripts/autopilot/lib/**"
+    ],
+    "exclude": [
+      "**/test/**"
+    ]
+  },
+  "gate": {
+    "requiredCommands": [
+      "lint",
+      "test",
+      "coverage",
+      "build"
+    ],
+    "requiredReviewers": [
+      "reviewer",
+      "security",
+      "test-quality",
+      "acceptance",
+      "second-opinion"
+    ],
+    "coverage": {
+      "enabled": true,
+      "changedLinesMin": 90,
+      "maxOverallDrop": 0
+    }
+  },
+  "protectedPaths": [
+    ".autopilot/config.json",
+    ".autopilot/charter.md",
+    ".autopilot/schemas/",
+    ".github/workflows/",
+    ".github/CODEOWNERS",
+    "scripts/autopilot/cli.mjs",
+    "scripts/autopilot/lint.mjs",
+    "scripts/autopilot/lib/config.mjs",
+    "scripts/autopilot/lib/coverage.mjs",
+    "scripts/autopilot/lib/gate.mjs",
+    "scripts/autopilot/lib/risk.mjs",
+    "ai-assist-template/.autopilot/config.json",
+    "ai-assist-template/.autopilot/charter.md",
+    "ai-assist-template/.autopilot/schemas/",
+    "ai-assist-template/.github/workflows/",
+    "ai-assist-template/scripts/autopilot/cli.mjs",
+    "ai-assist-template/scripts/autopilot/lint.mjs",
+    "ai-assist-template/scripts/autopilot/lib/config.mjs",
+    "ai-assist-template/scripts/autopilot/lib/coverage.mjs",
+    "ai-assist-template/scripts/autopilot/lib/gate.mjs",
+    "ai-assist-template/scripts/autopilot/lib/risk.mjs"
+  ],
+  "riskyPaths": [
+    "scripts/autopilot/setup.sh",
+    "ai-assist-template/scripts/autopilot/setup.sh",
+    "ai-assist-template/SETUP.md",
+    ".claude/settings.json",
+    ".vscode/settings.json"
+  ]
+}

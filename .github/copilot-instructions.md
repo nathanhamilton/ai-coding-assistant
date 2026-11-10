@@ -1,7 +1,8 @@
 # GitHub Copilot Instructions — AI Coding Assistant
 
-This is a documentation and AI tooling meta-repo. There is no application code.
-All content is Markdown and YAML config.
+This is a documentation and AI tooling meta-repo. Apart from the Autopilot runtime
+(`scripts/autopilot/`, `dashboard/`, dependency-free Node), all content is Markdown,
+JSON, and YAML config.
 
 ---
 
@@ -50,11 +51,21 @@ After any edit to template files, verify no `[bracket placeholders]` remain in t
 grep -r '\[' ai-assist-template/ --include='*.md'
 ```
 
-### No Application Code
+### No Application Code (except Autopilot)
 
-This repo has no runtime, no package manager, no database, and no test suite.
-Do not suggest adding npm/pip/bundler dependencies, migrations, or CI test pipelines
-unless a new capability explicitly requires it.
+This repo has no package manager and no database. The only runtime code is
+Autopilot (`scripts/autopilot/`, `dashboard/`): zero-dependency Node, tested with
+`node --test scripts/autopilot/test/` and linted with `node scripts/autopilot/lint.mjs`.
+Keep it dependency-free. Do not suggest adding npm/pip/bundler dependencies or
+migrations unless a new capability explicitly requires it.
+
+### Autopilot
+
+- Approved contracts are built autonomously in GitHub Actions. See `.autopilot/README.md`.
+- During Autopilot runs, `.autopilot/charter.md` overrides the "Ask Before Broad
+  Changes" rule below: the approved contract is the approval.
+- Files shared with the template (listed in `scripts/autopilot/lint.mjs` → `MIRRORED`)
+  must be changed in both places. Lint fails on drift.
 
 ### Agent and Skill File Conventions
 
@@ -87,6 +98,8 @@ The lifecycle enforces:
 Use specialist agents when their domain fits the task.
 
 - `@ai-tooling-updater` — syncs template improvements from a source repo into a target repo
+
+Autopilot's CI roles (`.autopilot/roles/`) reuse these agent files as domain guidance.
 
 ---
 

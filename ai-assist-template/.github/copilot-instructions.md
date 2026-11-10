@@ -91,6 +91,13 @@ Get approval before:
 - broad file moves or directory restructuring
 - choosing between multiple valid approaches
 
+### Autopilot Exception
+
+If `.autopilot/` is installed, agents running inside Autopilot follow
+`.autopilot/charter.md` instead of the ask-first rule: the owner-approved
+contract is the approval, and decisions are recorded in each PR's
+**Decisions** section.
+
 ### Follow Existing Patterns
 
 - Prefer the repo's established boundaries and file layout.

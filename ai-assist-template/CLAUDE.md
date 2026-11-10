@@ -20,6 +20,14 @@ The project lifecycle prompts are available as slash commands via \`.claude/comm
 | \`/save\` | Save session progress to the active project file |
 | \`/end\` | End session — final log, commit message, PR description |
 | \`/review\` | Code review against project standards |
+| \`/launch\` | Hand an agreed contract to Autopilot (autonomous build → gate → merge) |
+| \`/autopilot\` | Autopilot status — what needs you, what's in flight, what it learned |
+
+### Autopilot
+
+When \`.autopilot/\` exists, approved contracts are built autonomously in GitHub
+Actions. See \`.autopilot/README.md\`. Every Autopilot agent follows
+\`.autopilot/charter.md\`, which overrides all other guidance during Autopilot runs.
 
 ### Skills
 

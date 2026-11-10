@@ -1,18 +1,23 @@
 # Project Index
 
-**Last Updated:** 2026-04-09
+**Last Updated:** 2026-10-14
 
 ---
 
 ## 📊 Statistics
 
-- **Active Projects:** 1
+- **Active Projects:** 2
 - **Recently Completed:** 0
 - **Total Archived:** 0
 
 ---
 
 ## 🟢 Active Projects
+
+- **task-2026-10-14-autopilot** — Autopilot: self-managing build, gate, and merge system
+  - **Phase:** Built and verified locally; awaiting owner setup and first live run
+  - **Progress:** 90%
+  - **Next:** `/launch` the demo contract `autopilot-demo-dashboard-v2.contract.md`
 
 - **task-2026-04-09-multitool-compatability** — Cross-platform AI tooling compatibility
   - **Phase:** ✅ Complete

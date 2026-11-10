@@ -1,0 +1,50 @@
+# Autopilot dashboard — rebuilds the GitHub Pages status site from live
+# issue/PR/gate data whenever Autopilot does something, and hourly.
+name: Autopilot Dashboard
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+  push:
+  workflow_run:
+    workflows: [Autopilot Gate, Autopilot Dispatch, Autopilot Plan, Autopilot Build, Autopilot Fix]
+    types: [completed]
+
+concurrency:
+  group: autopilot-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    if: github.event_name != 'push' || github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Build dashboard
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: node scripts/autopilot/cli.mjs dashboard --out _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

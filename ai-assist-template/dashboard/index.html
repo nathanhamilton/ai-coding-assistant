@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Autopilot Dashboard</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%232a78d6'/%3E%3Cpath d='M5 8.5l2 2 4-5' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top__inner">
+      <div>
+        <h1 class="top__title">Autopilot</h1>
+        <p class="top__meta"><a id="repo-link" href="#"></a> · <span id="generated"></span></p>
+      </div>
+      <div class="top__actions">
+        <button type="button" class="btn" id="theme-toggle" aria-label="Toggle color theme">◐</button>
+        <button type="button" class="btn" id="refresh">Refresh</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="needs-h" class="panel panel--attention" id="needs-panel">
+      <h2 id="needs-h" class="panel__title">Needs you <span class="count" id="needs-count"></span></h2>
+      <ul class="needs" id="needs"></ul>
+    </section>
+
+    <section aria-label="Summary" class="tiles" id="tiles"></section>
+
+    <div class="grid-2">
+      <section aria-labelledby="contracts-h" class="panel">
+        <h2 id="contracts-h" class="panel__title">Contracts</h2>
+        <ul class="contracts" id="contracts"></ul>
+      </section>
+      <section aria-labelledby="trend-h" class="panel">
+        <div class="panel__head">
+          <h2 id="trend-h" class="panel__title">Overall coverage at each merge</h2>
+          <button type="button" class="link-btn" id="trend-table-toggle" aria-expanded="false">Show table</button>
+        </div>
+        <div class="chart" id="trend"></div>
+        <div id="trend-table" hidden></div>
+      </section>
+    </div>
+
+    <section aria-labelledby="board-h" class="panel">
+      <h2 id="board-h" class="panel__title">Task board</h2>
+      <div class="board" id="board"></div>
+    </section>
+
+    <section aria-labelledby="pipeline-h" class="panel">
+      <h2 id="pipeline-h" class="panel__title">PR pipeline</h2>
+      <div class="table-scroll"><table class="table" id="pipeline"></table></div>
+    </section>
+
+    <div class="grid-2">
+      <section aria-labelledby="merged-h" class="panel">
+        <h2 id="merged-h" class="panel__title">Recently merged</h2>
+        <div class="table-scroll"><table class="table" id="merged"></table></div>
+      </section>
+      <section aria-labelledby="learning-h" class="panel">
+        <h2 id="learning-h" class="panel__title">What the system learned</h2>
+        <ul class="learning" id="learning"></ul>
+      </section>
+    </div>
+  </main>
+
+  <footer class="wrap foot">
+    Gate: CI · ≥90% changed-line coverage · reviewer · security · test-quality · acceptance · second opinion.
+    Owner approves contracts and risky merges.
+  </footer>
+
+  <div class="tooltip" id="tooltip" role="status" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>
