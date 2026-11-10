@@ -1,0 +1,105 @@
+# Autopilot planner: when the owner approves a contract, break it into
+# dependency-ordered task issues.
+name: Autopilot Plan
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      contract:
+        description: Contract issue number
+        required: true
+        type: number
+
+concurrency:
+  group: autopilot-plan-${{ inputs.contract || github.event.issue.number }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Only the owner can approve a contract.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.label.name == 'autopilot:approved' &&
+       contains(github.event.issue.labels.*.name, 'autopilot:contract') &&
+       github.event.sender.login == (vars.AUTOPILOT_OWNER || github.repository_owner))
+    env:
+      CONTRACT: ${{ inputs.contract || github.event.issue.number }}
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOPILOT_APP_ID }}
+          private-key: ${{ secrets.AUTOPILOT_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Skip if already planned
+        id: check
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          EXISTING=$(gh issue list --label autopilot:task --state all --limit 500 --json body -q '.[].body' | grep -cE "\*\*Contract:\*\* #${CONTRACT}([^0-9]|$)" || true)
+          if [ "$EXISTING" != "0" ]; then
+            echo "Contract #$CONTRACT already has $EXISTING tasks."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          gh issue edit "$CONTRACT" --add-label autopilot:planning
+          echo "model=$(jq -r '.models.plan // "claude-opus-5-5"' .autopilot/config.json)" >> "$GITHUB_OUTPUT"
+          echo "schema=$(jq -c . .autopilot/schemas/plan.json)" >> "$GITHUB_OUTPUT"
+      - name: Plan
+        id: claude
+        if: steps.check.outputs.skip != 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
+          allowed_bots: '*'
+          prompt: |
+            You are the Autopilot **planner** for contract issue #${{ env.CONTRACT }} in ${{ github.repository }}.
+
+            1. Read `.autopilot/charter.md` (it overrides everything else).
+            2. Read `.autopilot/roles/planner.md` and `.autopilot/learned/planner.md`.
+            3. Read the contract: `gh issue view ${{ env.CONTRACT }} --comments`.
+
+            Explore the codebase as needed. Do not modify files or create issues.
+            Return the plan as structured output.
+          claude_args: >-
+            --model ${{ steps.check.outputs.model }}
+            --max-turns 80
+            --allowedTools "Read,Glob,Grep,Bash(gh issue view:*),Bash(git log:*),Bash(ls:*)"
+            --json-schema '${{ steps.check.outputs.schema }}'
+      - name: Create task issues
+        if: steps.check.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PLAN: ${{ steps.claude.outputs.structured_output }}
+        run: |
+          printf '%s' "$PLAN" > plan.json
+          if jq -e '.tasks | length == 1 and .[0].id == "blocked"' plan.json >/dev/null; then
+            gh issue comment "$CONTRACT" --body "🚧 **Planner needs you:** $(jq -r '.tasks[0].goal' plan.json)"
+            gh issue edit "$CONTRACT" --remove-label autopilot:planning --add-label autopilot:needs-human
+            exit 0
+          fi
+          node scripts/autopilot/cli.mjs create-tasks --contract "$CONTRACT" --plan plan.json
+          gh workflow run autopilot-dispatch.yml
+      - name: Escalate on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          gh issue comment "$CONTRACT" --body "❌ Planning failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh issue edit "$CONTRACT" --remove-label autopilot:planning --add-label autopilot:needs-human

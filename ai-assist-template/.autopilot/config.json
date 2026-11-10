@@ -1,0 +1,66 @@
+{
+  "_comment": "Autopilot settings. PROTECTED: only the owner may change this file. Fill in owner, defaultBranch, commands, coverage.include, and riskyPaths during setup. See .autopilot/README.md.",
+  "version": 1,
+  "owner": "",
+  "defaultBranch": "main",
+  "maxConcurrent": 3,
+  "maxFixAttempts": 3,
+  "autoMergeHumanPrs": false,
+  "models": {
+    "plan": "claude-opus-5-5",
+    "build": "claude-opus-5-5",
+    "review": "claude-opus-5-5",
+    "secondOpinion": "claude-sonnet-5-5",
+    "retro": "claude-opus-5-5"
+  },
+  "commands": {
+    "setup": "",
+    "lint": "",
+    "typecheck": "",
+    "test": "",
+    "build": "",
+    "coverage": ""
+  },
+  "coverage": {
+    "lcovPath": "coverage/lcov.info",
+    "include": [],
+    "exclude": ["**/test/**", "**/tests/**", "**/spec/**", "**/__tests__/**", "**/*.test.*", "**/*.spec.*"]
+  },
+  "gate": {
+    "requiredCommands": ["lint", "test", "coverage"],
+    "requiredReviewers": ["reviewer", "security", "test-quality", "acceptance", "second-opinion"],
+    "coverage": { "enabled": true, "changedLinesMin": 90, "maxOverallDrop": 0 }
+  },
+  "protectedPaths": [
+    ".autopilot/config.json",
+    ".autopilot/charter.md",
+    ".autopilot/schemas/",
+    ".github/workflows/",
+    ".github/CODEOWNERS",
+    "scripts/autopilot/cli.mjs",
+    "scripts/autopilot/lint.mjs",
+    "scripts/autopilot/lib/config.mjs",
+    "scripts/autopilot/lib/coverage.mjs",
+    "scripts/autopilot/lib/gate.mjs",
+    "scripts/autopilot/lib/risk.mjs"
+  ],
+  "riskyPaths": [
+    "scripts/autopilot/setup.sh",
+    "**/auth/**",
+    "**/authentication/**",
+    "**/authorization/**",
+    "**/payments/**",
+    "**/billing/**",
+    "**/migrations/**",
+    "db/migrate/",
+    "db/schema.rb",
+    "**/*.sql",
+    "infra/",
+    "terraform/",
+    "**/*.tf",
+    "Dockerfile",
+    "docker-compose*.yml",
+    ".env*",
+    "**/secrets/**"
+  ]
+}

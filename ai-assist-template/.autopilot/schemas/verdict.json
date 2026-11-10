@@ -1,0 +1,25 @@
+{
+  "type": "object",
+  "required": ["decision", "summary", "findings"],
+  "additionalProperties": false,
+  "properties": {
+    "decision": { "type": "string", "enum": ["approve", "request_changes"] },
+    "summary": { "type": "string", "description": "Two to four sentences on what was checked and the overall conclusion." },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "title", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "severity": { "type": "string", "enum": ["blocking", "warning", "note"] },
+          "title": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "integer" },
+          "detail": { "type": "string", "description": "What is wrong, why it matters, and the concrete fix." }
+        }
+      }
+    },
+    "lesson": { "type": "string", "description": "Optional. A reusable lesson for future builders, if this review revealed a recurring pattern." }
+  }
+}

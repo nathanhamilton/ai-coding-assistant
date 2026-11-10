@@ -1,0 +1,112 @@
+# Autopilot builder: implements one task issue and opens one PR.
+# Dispatched by autopilot-dispatch when the task's dependencies are done and a
+# concurrency slot is free.
+name: Autopilot Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Task issue number
+        required: true
+        type: number
+
+concurrency:
+  group: autopilot-task-${{ inputs.task }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOPILOT_APP_ID }}
+          private-key: ${{ secrets.AUTOPILOT_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Prepare branch
+        id: prep
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          git config user.name "autopilot[bot]"
+          git config user.email "autopilot[bot]@users.noreply.github.com"
+          BRANCH="autopilot/task-${{ inputs.task }}"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+          else
+            git checkout -b "$BRANCH"
+          fi
+          echo "model=$(jq -r '.models.build // "claude-opus-5-5"' .autopilot/config.json)" >> "$GITHUB_OUTPUT"
+          echo "title=$(gh issue view ${{ inputs.task }} --json title -q .title)" >> "$GITHUB_OUTPUT"
+          SETUP=$(jq -r '.commands.setup // ""' .autopilot/config.json)
+          if [ -n "$SETUP" ]; then bash -c "$SETUP"; fi
+      - name: Build
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
+          allowed_bots: '*'
+          prompt: |
+            You are the Autopilot **builder** for task #${{ inputs.task }} in ${{ github.repository }}.
+
+            1. Read `.autopilot/charter.md` (it overrides everything else).
+            2. Read `.autopilot/roles/builder.md`, your role, and follow it exactly.
+            3. Read the task: `gh issue view ${{ inputs.task }}`, and its contract issue.
+
+            You are on branch `autopilot/task-${{ inputs.task }}`. Commit your work to this branch with
+            conventional commit messages. Do NOT push and do NOT open the PR: the workflow does that.
+            Write the pull request body (format in your role file) to `${{ runner.temp }}/pr-body.md`.
+
+            If you cannot complete the task without the owner, write only the line
+            `AUTOPILOT-BLOCKED: <the question>` to `${{ runner.temp }}/pr-body.md` and make no commits.
+          claude_args: >-
+            --model ${{ steps.prep.outputs.model }}
+            --max-turns 200
+            --allowedTools "Read,Write,Edit,MultiEdit,Glob,Grep,Bash,WebFetch"
+      - name: Open pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          TASK_TITLE: ${{ steps.prep.outputs.title }}
+        run: |
+          BODY="${{ runner.temp }}/pr-body.md"
+          if [ -f "$BODY" ] && grep -q '^AUTOPILOT-BLOCKED:' "$BODY"; then
+            gh issue comment ${{ inputs.task }} --body "🚧 **Builder blocked** — $(sed 's/^AUTOPILOT-BLOCKED: //' "$BODY")"
+            gh issue edit ${{ inputs.task }} --remove-label autopilot:building --add-label autopilot:needs-human
+            exit 0
+          fi
+          node scripts/autopilot/cli.mjs open-pr --task ${{ inputs.task }} --title "$TASK_TITLE" --body-file "$BODY"
+      - name: Mark task in review
+        if: steps.pr.outputs.opened == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: gh issue edit ${{ inputs.task }} --remove-label autopilot:building --add-label autopilot:in-review
+      - name: Nothing produced
+        if: steps.pr.outputs.opened == 'false'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          gh issue comment ${{ inputs.task }} --body "⚠️ Builder finished without producing commits. Escalating."
+          gh issue edit ${{ inputs.task }} --remove-label autopilot:building --add-label autopilot:needs-human
+      - name: Escalate on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          gh issue comment ${{ inputs.task }} --body "❌ Builder run failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          gh issue edit ${{ inputs.task }} --remove-label autopilot:building --add-label autopilot:needs-human

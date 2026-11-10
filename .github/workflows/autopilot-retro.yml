@@ -1,0 +1,79 @@
+# Autopilot retrospective — the self-improvement loop. Mines gate outcomes and
+# opens a PR that updates learned guidance, the knowledge base, and standards.
+# That PR goes through the same gate; protected paths are owner-gated.
+name: Autopilot Retro
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      contract:
+        description: Completed contract to review (optional)
+        required: false
+        type: string
+
+concurrency:
+  group: autopilot-retro
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  retro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOPILOT_APP_ID }}
+          private-key: ${{ secrets.AUTOPILOT_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ steps.app.outputs.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Prepare branch
+        id: prep
+        env:
+          CONTRACT: ${{ inputs.contract }}
+        run: |
+          if [ -n "$CONTRACT" ] && ! [[ "$CONTRACT" =~ ^[0-9]+$ ]]; then echo "::error::contract must be a number"; exit 1; fi
+          git config user.name "autopilot[bot]"
+          git config user.email "autopilot[bot]@users.noreply.github.com"
+          DATE=$(date -u +%Y-%m-%d)
+          git checkout -b "autopilot/retro-$DATE-${{ github.run_id }}"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+          echo "model=$(jq -r '.models.retro // "claude-opus-5-5"' .autopilot/config.json)" >> "$GITHUB_OUTPUT"
+          if [ -n "$CONTRACT" ]; then echo "focus=Focus on completed contract #$CONTRACT end to end, then recent PRs generally." >> "$GITHUB_OUTPUT"; else echo "focus=Review Autopilot PRs from the last 14 days." >> "$GITHUB_OUTPUT"; fi
+      - name: Retrospective
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ steps.app.outputs.token }}
+          allowed_bots: '*'
+          prompt: |
+            You are the Autopilot **retro** agent for ${{ github.repository }}.
+
+            1. Read `.autopilot/charter.md` (it overrides everything else).
+            2. Read `.autopilot/roles/retro.md` and follow it exactly.
+
+            ${{ steps.prep.outputs.focus }}
+            Commit evidence-backed improvements to the current branch. Do NOT push or open a PR.
+            Write the PR body (each change → evidence) to `${{ runner.temp }}/pr-body.md`.
+          claude_args: >-
+            --model ${{ steps.prep.outputs.model }}
+            --max-turns 120
+            --allowedTools "Read,Write,Edit,MultiEdit,Glob,Grep,Bash(gh pr list:*),Bash(gh pr view:*),Bash(gh issue view:*),Bash(gh issue list:*),Bash(git:*)"
+      - name: Open PR
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          node scripts/autopilot/cli.mjs open-pr --title "chore(autopilot): retrospective ${{ steps.prep.outputs.date }}" --body-file "${{ runner.temp }}/pr-body.md"

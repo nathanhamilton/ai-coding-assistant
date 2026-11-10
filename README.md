@@ -78,6 +78,31 @@ After setup, the normal flow is:
 3. Implement with the repo-specific instructions and generated skills.
 4. Use `/save` to record progress and `/end` to close the session cleanly.
 
+Or hand the agreed contract to Autopilot and check in with `/autopilot` or the dashboard.
+
+## Autopilot: Let The Repo Build Itself
+
+Once a contract is agreed, choose **Autopilot** (or run `/launch`). GitHub Actions
+then does everything else:
+
+1. **Planner** splits the contract into small tasks with a dependency graph.
+2. **Dispatcher** starts up to 3 ready tasks at a time.
+3. **Builder** implements each task with tests and opens a PR.
+4. **The gate** must pass in full: CI, ≥90% changed-line coverage, and five
+   independent AI reviewers (correctness, security, test quality, acceptance,
+   plus a second opinion on a different model).
+5. Standard PRs **auto-merge**. PRs touching risky or protected paths wait for
+   your approval. Failures go to a **fixer** for up to 3 attempts, then come to
+   you with a diagnosis.
+6. A **retro** agent learns from every gate result and updates the system's own
+   guidance. It can add scrutiny, never remove it.
+
+A **live dashboard** on GitHub Pages shows what needs you, contract progress, the
+task board, the PR pipeline, the coverage trend, and what the system learned.
+Run `/autopilot` for the same summary in chat.
+
+Full guide and setup: [.autopilot/README.md](.autopilot/README.md).
+
 ## Repository Layout
 
 ```text
@@ -89,11 +114,15 @@ After setup, the normal flow is:
 │   └── commands/          # Slash commands for Claude Code and Conductor
 ├── .cursor/
 │   └── rules/             # Cursor always-on rule
+├── .autopilot/            # Autopilot charter, config, roles, learned guidance
+├── dashboard/             # Autopilot status site (GitHub Pages)
+├── scripts/autopilot/     # Autopilot CLI, gate, scheduler (+ tests)
 ├── .github/               # Shared core — single source of truth for all tools
 │   ├── copilot-instructions.md
 │   ├── agents/
 │   ├── prompts/
-│   └── skills/
+│   ├── skills/
+│   └── workflows/         # Autopilot plan · build · gate · fix · merge · retro · dashboard
 └── .vscode/               # VS Code editor settings
 ```
 

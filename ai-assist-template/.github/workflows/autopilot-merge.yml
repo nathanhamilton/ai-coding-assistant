@@ -1,0 +1,31 @@
+# Owner approval of a risky/protected Autopilot PR → enable auto-merge.
+# GitHub still requires the `autopilot-gate` check and code-owner review.
+name: Autopilot Owner Approval
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event.review.state == 'approved' &&
+      github.event.review.user.login == (vars.AUTOPILOT_OWNER || github.repository_owner) &&
+      contains(github.event.pull_request.labels.*.name, 'autopilot')
+    steps:
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.AUTOPILOT_APP_ID }}
+          private-key: ${{ secrets.AUTOPILOT_APP_PRIVATE_KEY }}
+      - name: Enable auto-merge
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh pr edit ${{ github.event.pull_request.number }} --remove-label autopilot:awaiting-owner || true
+          gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
