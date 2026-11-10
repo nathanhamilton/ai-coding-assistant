@@ -27,6 +27,7 @@ and shipped in both the live installation and `ai-assist-template/`.
 - [x] Command tables updated in `CLAUDE.md`, Cursor rules, agents README (live + template)
 - [x] Remove the leftover `prompts-template/` directory
 - [x] Ignore `.DS_Store`
+- [x] List `/status-report` in `project.prompt.md` session commands and the VS Code welcome message (live + template)
 
 ### Constraints
 - Template copy must stay generic and placeholder-free.
@@ -44,6 +45,11 @@ and shipped in both the live installation and `ai-assist-template/`.
 ### Modified
 - `CLAUDE.md`, `.cursor/rules/ai-project-assist.mdc`, `.github/agents/README.md`
   (+ template copies): one command-table row each
+
+- `.github/prompts/project.prompt.md`, `.vscode/settings.json` (+ template copies):
+  `/status-report` added to the session-command list and the Copilot welcome message.
+  The `/status` entries in `.vscode/` are a separate snippet shortcut and were left alone.
+- `ai-project-assist/projects/_index.md`: multitool project moved out of "Active"
 
 ### Removed
 - `prompts-template/`: empty directories (`projects/archive/sessions/`) plus a
@@ -69,6 +75,8 @@ and shipped in both the live installation and `ai-assist-template/`.
   and copied here; it was never committed.
 - Traced `prompts-template/` via git history and removed it.
 - Created branch, project file, `.gitignore`; committed.
+- Picked up the item the 2026-10-09 session left open: VS Code welcome message
+  and `project.prompt.md` command list now include `/status-report`.
 
 ---
 

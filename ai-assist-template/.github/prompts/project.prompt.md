@@ -169,3 +169,4 @@ deliverables is done.
 - `/save` — append session log to project file
 - `/end` — final log, commit message, PR description
 - `/review` — code review against project standards
+- `/status-report` — plain-English status report, verified against the code
