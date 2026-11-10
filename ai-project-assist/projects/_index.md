@@ -1,24 +1,22 @@
 # Project Index
 
-**Last Updated:** 2026-04-09
+**Last Updated:** 2026-11-10
 
 ---
 
 ## 📊 Statistics
 
-- **Active Projects:** 1
-- **Recently Completed:** 0
+- **Active Projects:** 0
+- **Recently Completed:** 2
 - **Total Archived:** 0
 
 ---
 
 ## 🟢 Active Projects
 
-- **task-2026-04-09-multitool-compatability** — Cross-platform AI tooling compatibility
-  - **Phase:** ✅ Complete
-  - **Progress:** 100%
+[No active projects]
 
-**To create your first project:**
+**To create a new project:**
 
 ```text
 Say: "new project: TICKET-1234-brief-description"
@@ -28,7 +26,10 @@ Say: "new project: TICKET-1234-brief-description"
 
 ## ✅ Recently Completed (Last 90 Days)
 
-[No completed projects yet]
+- **task-2026-11-10-status-report** — Add `/status-report` command (live + template)
+  - **Completed:** 2026-11-10
+- **task-2026-04-09-multitool-compatability** — Cross-platform AI tooling compatibility
+  - **Completed:** 2026-04-09 (over 90 days ago; due to move to `archive/`)
 
 ---
 

@@ -20,6 +20,7 @@ The project lifecycle prompts are available as slash commands via \`.claude/comm
 | \`/save\` | Save session progress to the active project file |
 | \`/end\` | End session — final log, commit message, PR description |
 | \`/review\` | Code review against project standards |
+| \`/status-report\` | Plain-English chief-of-staff report: where the project stands, verified against the code, and what to do next |
 
 ### Skills
 
