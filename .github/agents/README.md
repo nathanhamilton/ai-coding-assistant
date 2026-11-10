@@ -79,6 +79,7 @@ This directory should never assume Rails, RSpec, or any other stack by default.
 | `/save` | `.github/prompts/save.prompt.md` | Save session progress |
 | `/end` | `.github/prompts/end.prompt.md` | Close session and summarize |
 | `/review` | `.github/prompts/review.prompt.md` | Run a standards-based review |
+| `/status-report` | `.github/prompts/status-report.prompt.md` | Plain-English status report, verified against the code |
 
 ---
 

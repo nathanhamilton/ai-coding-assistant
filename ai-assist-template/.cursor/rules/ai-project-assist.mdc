@@ -24,6 +24,7 @@ or reference their content in chat:
 | \`.github/prompts/save.prompt.md\` | Save session progress |
 | \`.github/prompts/end.prompt.md\` | End session with commit message |
 | \`.github/prompts/review.prompt.md\` | Code review against project standards |
+| \`.github/prompts/status-report.prompt.md\` | Plain-English status report, verified against the code |
 
 ### Agent Files
 

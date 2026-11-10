@@ -1,13 +1,13 @@
 # Project Index
 
-**Last Updated:** 2026-04-09
+**Last Updated:** 2026-11-10
 
 ---
 
 ## 📊 Statistics
 
 - **Active Projects:** 1
-- **Recently Completed:** 0
+- **Recently Completed:** 1
 - **Total Archived:** 0
 
 ---
@@ -28,7 +28,8 @@ Say: "new project: TICKET-1234-brief-description"
 
 ## ✅ Recently Completed (Last 90 Days)
 
-[No completed projects yet]
+- **task-2026-11-10-status-report** — Add `/status-report` command (live + template)
+  - **Completed:** 2026-11-10
 
 ---
 
